@@ -12,7 +12,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import { createUser } from "../../services/MethodPost/CreateUser";
 import { CreateUserPayload } from "../../types/user.types";
 import {
   // passwordRequirements,
@@ -25,6 +24,7 @@ import {
 } from "../../utils/validateForm";
 import LoadingHandler from "../shared/loadingHandler";
 import LocationSelector from "../shared/LocationSelector";
+import { createUser } from "../../services/user";
 
 interface RegisterFormProps {
   toggleForm: () => void;

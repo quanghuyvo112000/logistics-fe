@@ -14,9 +14,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { getAllWarehouse } from "../../services/MethodGet/GetAllWarehouse";
+import { getAllWarehouse, getWarehouse } from "../../services/warehouse";
 import { Warehouse } from "../../types/warehouse.types";
+import { decryptData } from "../../utils/crypto";
 import LoadingHandler from "../shared/loadingHandler";
+import { localStorageHelper } from "../shared/localStorageHelper";
 import WarehouseRow from "./WarehouseRow";
 
 const WarehouseList: React.FC = () => {
@@ -29,11 +31,24 @@ const WarehouseList: React.FC = () => {
 
   const hasChecked = useRef(false);
 
+  const authDataString = localStorageHelper.getItem<string>("auth_token");
+  const authData = JSON.parse(authDataString || "{}");
+  const role = decryptData(authData.role);
+
   const fetchWarehouses = async () => {
     try {
-      const response = await getAllWarehouse();
-      setWarehouses(response.data);
-      setFilteredWarehouses(response.data);
+      let result: Warehouse[] = [];
+
+      if (role === "ADMIN") {
+        const response = await getAllWarehouse();
+        result = response.data;
+      } else if (role === "WAREHOUSE_MANAGER") {
+        const response = await getWarehouse();
+        result = response.data ? [response.data] : [];
+      }
+
+      setWarehouses(result);
+      setFilteredWarehouses(result);
     } catch (err) {
       console.error("Error loading warehouses:", err);
       setError(
@@ -41,7 +56,7 @@ const WarehouseList: React.FC = () => {
       );
     }
   };
-  
+
   const loadWarehouses = async (
     showLoading: () => void,
     hideLoading: () => void
@@ -55,7 +70,6 @@ const WarehouseList: React.FC = () => {
       hideLoading();
     }
   };
-  
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);

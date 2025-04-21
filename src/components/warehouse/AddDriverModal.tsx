@@ -1,7 +1,6 @@
 import { Box, Grid, MenuItem, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
-import { createDriver } from "../../services/MethodPost/CreateDriver";
 import { CreateDriverPayload } from "../../types/user.types";
 import { passwordValid } from "../../utils/passwordValidation";
 import {
@@ -12,6 +11,7 @@ import {
 import CommonModal from "../shared/CommonModal";
 import LocationSelector from "../shared/LocationSelector";
 import LoadingHandler from "../shared/loadingHandler";
+import { createDriver } from "../../services/user";
 
 interface Props {
   open: boolean;

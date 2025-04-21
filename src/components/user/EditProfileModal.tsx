@@ -1,11 +1,11 @@
 import { Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
-import { updateUserProfile } from "../../services/MethodPut/UpdateUserProfile";
 import { UserInfo } from "../../types/user.types";
 import { checkValidateBirthday, checkValidatePhoneNumber } from "../../utils/validateForm";
 import CommonModal from "../shared/CommonModal";
 import LocationSelector from "../shared/LocationSelector";
+import { updateUserProfile } from "../../services/user";
 
 interface Props {
   open: boolean;

@@ -16,8 +16,8 @@ import React, { useState } from "react";
 import LoadingHandler from "../shared/loadingHandler";
 import { localStorageHelper } from "../shared/localStorageHelper";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../services/MethodPost/LoginService";
 import { encryptData } from "../../utils/crypto";
+import { login } from "../../services/authen";
 
 interface LoginFormProps {
   toggleForm: () => void;

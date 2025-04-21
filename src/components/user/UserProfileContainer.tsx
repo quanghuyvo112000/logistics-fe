@@ -1,10 +1,10 @@
 import { Alert, Container } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { UserInfo, UserInfoResponse } from "../../types/user.types";
-import { getProfile } from "../../services/MethodGet/GetProfile";
 import LoadingHandler from "../shared/loadingHandler";
 import ProfileDisplay from "./ProfileDisplay";
 import EditProfileModal from "./EditProfileModal";
+import { getProfile } from "../../services/user";
 
 
 const UserProfileContainer: React.FC = () => {

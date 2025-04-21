@@ -1,10 +1,8 @@
 import { Box } from '@mui/material';
 import { ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { introspectToken } from '../../services/MethodPost/IntrospectToken';
-import { logout } from '../../services/MethodPost/LogoutService';
-import { refreshToken } from '../../services/MethodPost/RefreshToken';
 import { localStorageHelper } from '../shared/localStorageHelper';
+import { introspectToken, logout, refreshToken } from '../../services/authen';
 
 interface Props {
   drawerWidth: number;
