@@ -1,6 +1,6 @@
 import {
   Dashboard,
-  DriveEta,
+  CalendarMonth,
   ExpandLess,
   ExpandMore,
   LocalShipping,
@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logout } from '../../services/MethodPost/LogoutService';
+import { logout } from '../../services/authen';
 
 interface Props {
   drawerWidth: number;
@@ -49,7 +49,7 @@ const Sidebar = ({ drawerWidth }: Props) => {
     { text: 'Dashboard', path: '/dashboard', icon: <Dashboard /> },
     { text: 'Shipments', path: '/shipments', icon: <LocalShipping /> },
     { text: 'Warehouses', path: '/warehouses', icon: <Warehouse /> },
-    { text: 'Drivers', path: '/drivers', icon: <DriveEta /> },
+    { text: 'Calendar', path: '/calendar', icon: <CalendarMonth /> },
     { text: 'Order', path: '/orders', icon: <Inventory /> },
   ];
 

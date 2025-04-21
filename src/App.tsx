@@ -7,11 +7,11 @@ import Sidebar from "./components/layout/Sidebar";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 import Authentication from "./pages/Authentication";
 import Dashboard from "./pages/Dashboard";
-import Drivers from "./pages/Drivers";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
 import Shipments from "./pages/Shipments";
 import Warehouses from "./pages/Warehouses";
+import Calendar from "./pages/Calendar";
 
 const drawerWidth = 240;
 
@@ -30,7 +30,7 @@ function AppLayout() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/shipments" element={<Shipments />} />
             <Route path="/warehouses" element={<Warehouses />} />
-            <Route path="/drivers" element={<Drivers />} />
+            <Route path="/Calendar" element={<Calendar />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/orders" element={<Orders />} />
           </Routes>
