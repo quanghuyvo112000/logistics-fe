@@ -1,5 +1,5 @@
 import {
-  DirectionsCar as DirectionsCarIcon,
+  PeopleAlt as DirectionsCarIcon,
   LocationOn as LocationOnIcon,
   Person as PersonIcon,
   Phone as PhoneIcon,
@@ -53,7 +53,6 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
   const formatAddress = (warehouse: Warehouse): string => {
     return [
       warehouse.address,
-      warehouse.ward,
       warehouse.district,
       warehouse.province,
     ]
@@ -64,7 +63,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
   return (
     <Box sx={{ margin: 1 }}>
       <Typography variant="h6" gutterBottom component="div">
-        Warehouse Details
+        Thông tin chi tiết kho
       </Typography>
 
       <Grid container spacing={3}>
@@ -86,21 +85,21 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                 sx={{ mb: 2, fontWeight: "bold" }}
               >
                 <LocationOnIcon sx={{ mr: 1, verticalAlign: "bottom" }} />
-                Location Information
+                Thông tin vị trí
               </Typography>
             </Box>
             <Box sx={{ ml: 4 }}>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Full Address:</strong> {formatAddress(warehouse)}
+                <strong>Địa chỉ đầy đủ:</strong> {formatAddress(warehouse)}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Contact Phone:</strong> {warehouse.phone}
+                <strong>Điện thoại liên hệ:</strong> {warehouse.phone}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Created:</strong> {formatDate(warehouse.createdAt)}
+                <strong>Tạo ngày:</strong> {formatDate(warehouse.createdAt)}
               </Typography>
               <Typography variant="body2">
-                <strong>Last Updated:</strong> {formatDate(warehouse.updatedAt)}
+                <strong>Cập nhật:</strong> {formatDate(warehouse.updatedAt)}
               </Typography>
             </Box>
           </Paper>
@@ -124,7 +123,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                 sx={{ mb: 2, fontWeight: "bold" }}
               >
                 <PersonIcon sx={{ mr: 1, verticalAlign: "bottom" }} />
-                Manager Information
+                Thông tin quản lý
               </Typography>
 
               <Button
@@ -133,7 +132,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                 size="small"
                 onClick={handleOpenManagerModal}
               >
-                Add Manager
+                Thêm quản lý
               </Button>
 
               <AddManagerModal
@@ -146,20 +145,20 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
 
             <Box sx={{ ml: 4 }}>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Name:</strong> {warehouse.manager?.fullName ?? "N/A"}
+                <strong>Họ và tên:</strong> {warehouse.manager?.fullName ?? "N/A"}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 <strong>Email:</strong> {warehouse.manager?.email ?? "N/A"}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Phone:</strong> {warehouse.manager?.phone ?? "N/A"}
+                <strong>Số điện thoại:</strong> {warehouse.manager?.phone ?? "N/A"}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Birthday:</strong>{" "}
+                <strong>Ngày sinh:</strong>{" "}
                 {formatDate(warehouse.manager?.birthday ?? null)}
               </Typography>
               <Typography variant="body2">
-                <strong>Address:</strong>{" "}
+                <strong>Địa chỉ hiện tại:</strong>{" "}
                 {[
                   warehouse.manager?.address ?? "N/A",
                   warehouse.manager?.ward ?? "N/A",
@@ -191,13 +190,13 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                 sx={{ mb: 2, fontWeight: "bold" }}
               >
                 <DirectionsCarIcon sx={{ mr: 1, verticalAlign: "bottom" }} />
-                Drivers ({warehouse.drivers.length})
+                Nhân viên giao hàng ({warehouse.drivers.length})
               </Typography>
               <Button 
               variant="contained" 
               size="small" 
               onClick={handleOpenDriverModal}>
-                Add Driver
+                Thêm nhân viên
               </Button>
               <AddDriverModal
                 open={isAddDriverModalOpen}
@@ -216,10 +215,10 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Contact</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Vehicle</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Address</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Tên</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Liên lạc</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Phương tiện giao thông</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Địa chỉ hiện tại</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -230,7 +229,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                             {driver?.fullName ?? "N/A"}
                           </Typography>
                           <Typography variant="body2" color="textSecondary">
-                            Birthday: {formatDate(driver?.birthday ?? null)}
+                            Sinh ngày: {formatDate(driver?.birthday ?? null)}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -250,7 +249,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                             {driver?.vehicleType ?? "N/A"}
                           </Typography>
                           <Typography variant="body2" color="textSecondary">
-                            Plate: {driver?.vehiclePlate ?? "N/A"}
+                            Số xe: {driver?.vehiclePlate ?? "N/A"}
                           </Typography>
                         </TableCell>
                         <TableCell>

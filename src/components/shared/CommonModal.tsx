@@ -59,7 +59,7 @@ const CommonModal: React.FC<CommonModalProps> = ({
   onConfirm,
   onCancel,
   confirmText = "Confirm",
-  cancelText = "Cancel",
+  cancelText = "Hủy",
   confirmColor = "primary",
   fullScreen = false,
   hideCloseIcon = false

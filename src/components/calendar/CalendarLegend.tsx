@@ -2,18 +2,18 @@ import { Box, Typography, useTheme } from "@mui/material"
 
 // Status colors
 const statusColors = {
-  available: "#4caf50", // green
-  working: "#1976d2", // blue
-  dayOff: "#ff9800", // orange
-  vacation: "#f44336", // red
+  approval: "#4caf50", // green
+  // working: "#1976d2", // blue
+  waitapproval: "#ff9800", // orange
+  rejected: "#f44336", // red
 }
 
 // Status labels
 const statusLabels = {
-  available: "Sẵn sàng",
-  working: "Đang làm việc",
-  dayOff: "Nghỉ",
-  vacation: "Nghỉ phép",
+  approval: "Đã duyệt",
+  // working: "Đang làm việc",
+  waitapproval: "Chờ phê duyệt",
+  rejected: "Từ chối",
 }
 
 interface CalendarLegendProps {
@@ -21,7 +21,7 @@ interface CalendarLegendProps {
   driversCount?: number
 }
 
-export const CalendarLegend = ({ userRole, driversCount = 0 }: CalendarLegendProps) => {
+export const CalendarLegend = ({ userRole }: CalendarLegendProps) => {
   const theme = useTheme()
 
   return (
@@ -78,11 +78,6 @@ export const CalendarLegend = ({ userRole, driversCount = 0 }: CalendarLegendPro
             </Box>
           ))
         )}
-      </Box>
-      <Box>
-        <Typography variant="caption">
-          {userRole === "DRIVER" ? "Nhấp vào ngày để đăng ký làm việc" : `Tổng số lịch: ${driversCount || 0}`}
-        </Typography>
       </Box>
     </Box>
   )

@@ -128,11 +128,11 @@ const WarehouseList: React.FC = () => {
                 }}
               >
                 <Typography variant="h5" component="h2">
-                  Warehouse Locations
+                  Địa điểm kho
                 </Typography>
                 {/* Search */}
                 <TextField
-                  label="Search warehouse name"
+                  label="Tìm kiếm tên kho"
                   size="small"
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
@@ -144,14 +144,14 @@ const WarehouseList: React.FC = () => {
                     <TableRow>
                       <TableCell width="60px" />
                       <TableCell sx={{ fontWeight: "bold" }}>
-                        Warehouse Name
+                        Tên kho
                       </TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>
-                        Province
+                        Khu vực
                       </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Phone</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Manager</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Drivers</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Điện thoại</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Quản lý</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Nhân viên giao hàng</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -172,7 +172,7 @@ const WarehouseList: React.FC = () => {
                       <TableRow>
                         <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
                           <Typography variant="body1" color="textSecondary">
-                            No warehouses found
+                            Không tìm thấy kho nào
                           </Typography>
                         </TableCell>
                       </TableRow>

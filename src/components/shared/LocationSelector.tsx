@@ -74,17 +74,17 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth size="medium">
-            <InputLabel id="province-label">Select province</InputLabel>
+            <InputLabel id="province-label">Chọn tỉnh/ Thành phố</InputLabel>
             <Select
               labelId="province-label"
               value={value.province}
-              label="Select province"
+              label="Chọn tỉnh/ Thành phố"
               onChange={(e: SelectChangeEvent) =>
                 handleChange("province", e.target.value)
               }
               sx={{ bgcolor: "#f9fafb" }}
             >
-              <MenuItem value="">Province/City</MenuItem>
+              <MenuItem value="">Chọn tỉnh/ Thành phố</MenuItem>
               {locations.map((location) => (
                 <MenuItem key={location.province} value={location.province}>
                   {location.province}
@@ -96,17 +96,17 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
 
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth size="medium" disabled={!value.province}>
-            <InputLabel id="district-label">Select district</InputLabel>
+            <InputLabel id="district-label">Chọn quận</InputLabel>
             <Select
               labelId="district-label"
               value={value.district}
-              label="Select district"
+              label="Chọn quận"
               onChange={(e: SelectChangeEvent) =>
                 handleChange("district", e.target.value)
               }
               sx={{ bgcolor: "#f9fafb" }}
             >
-              <MenuItem value="">Select district</MenuItem>
+              <MenuItem value="">Chọn quận</MenuItem>
               {locations
                 .find((location) => location.province === value.province)
                 ?.district.map((district) => (
@@ -120,17 +120,17 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
 
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth size="medium" disabled={!value.district}>
-            <InputLabel id="ward-label">Select ward</InputLabel>
+            <InputLabel id="ward-label">Chọn phường</InputLabel>
             <Select
               labelId="ward-label"
               value={value.ward}
-              label="Select ward"
+              label="Chọn phường"
               onChange={(e: SelectChangeEvent) =>
                 handleChange("ward", e.target.value)
               }
               sx={{ bgcolor: "#f9fafb" }}
             >
-              <MenuItem value="">Select ward</MenuItem>
+              <MenuItem value="">Chọn phường</MenuItem>
               {locations
                 .find((location) => location.province === value.province)
                 ?.ward.map((ward) => (
@@ -145,7 +145,7 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Address"
+            label="Địa chỉ"
             name="address"
             value={value.address}
             onChange={(e) => handleChange("address", e.target.value)}

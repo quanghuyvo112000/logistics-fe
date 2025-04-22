@@ -1,11 +1,10 @@
 import type React from "react"
 
-import { useState } from "react"
-import { Typography, TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, Box, SelectChangeEvent } from "@mui/material"
+import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
 import { format } from "date-fns"
-import { CreateWorkScheduleRequest } from "../../services/calendar"
+import { useState } from "react"
+import { CreateWorkScheduleRequest, shiftLabels } from "../../types/calendar.types"
 import CommonModal from "../shared/CommonModal"
-import { shiftLabels } from "../../types/calendar.types"
 
 
 interface RegistrationDialogProps {

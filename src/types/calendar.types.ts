@@ -47,4 +47,37 @@ export interface Driver {
     COMPLETED: "#1976d2", // blue
     CANCELLED: "#9e9e9e", // grey
   }
+
+  export interface WorkScheduleResponse {
+    status: number
+    message: string
+    data: WorkSchedule[]
+  }
+  
+  export interface WorkSchedule {
+    id: string
+    nameDriver?: string
+    workDate: string
+    startTime: string
+    endTime: string
+    shift: 'MORNING' | 'AFTERNOON' | 'EVENING' | 'NIGHT'
+    status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED'
+    note: string
+    createdAt: string
+    updatedAt: string
+    driverId?: string
+  }
+  
+  export interface CreateWorkScheduleRequest {
+    workDate: string
+    startTime: string
+    endTime: string
+    shift: 'MORNING' | 'AFTERNOON' | 'EVENING' | 'NIGHT'
+    note: string
+  }
+  
+  export interface UpdateWorkScheduleStatusRequest {
+    scheduleId: string
+    status: 'APPROVED' | 'REJECTED'
+  }
   

@@ -72,18 +72,18 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
         !formData.ward ||
         !formData.address
       ) {
-        showMessage("Please fill in all required fields.", "error");
+        showMessage("Vui lòng điền vào tất cả các trường bắt buộc.", "error");
         return;
       }
 
       if (!checkValidateBirthday(String(formData.birthday))) {
-        showMessage("You must be over 18 years old.", "error");
+        showMessage("Bạn phải trên 18 tuổi.", "error");
         return;
       }
 
       if (!checkValidatePhoneNumber(formData.phone)) {
         showMessage(
-          "Invalid phone number. Must be at least 10 digits.",
+          "Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số.",
           "error"
         );
         return;
@@ -91,24 +91,24 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
 
       if (!passwordValid(formData.password)) {
         showMessage(
-          "Password must be at least 8 characters, including uppercase letters, numbers and special characters.",
+          "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt.",
           "error"
         );
         return;
       }
 
       if (!checkValidateEmail(formData.email)) {
-        showMessage("Email does not have @ suffix", "error");
+        showMessage("Email không có hậu tố @", "error");
         return;
       }
 
       await createManager(formData);
-      showMessage("Create Manager successfully!", "success");
+      showMessage("Tạo quản lý thành công!", "success");
       await fetchWarehouses();
       onClose();
     } catch (error) {
       console.error(error);
-      showMessage("An error occurred while creating Manager.", "error");
+      showMessage("Đã xảy ra lỗi khi tạo quản lý.", "error");
     } finally {
       hideLoading();
     }
@@ -120,8 +120,8 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
         <CommonModal
           open={open}
           onClose={onClose}
-          title="Add Warehouse Management"
-          confirmText="Save"
+          title="Thêm Quản Lý Kho Hàng"
+          confirmText="Lưu thông tin"
           loading={false}
           onConfirm={() => handleSubmit(showLoading, hideLoading)}
           maxWidth="md"
@@ -132,7 +132,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                 <TextField
                   fullWidth
                   name="fullName"
-                  label="Full name"
+                  label="Họ và tên"
                   value={formData.fullName}
                   onChange={handleChange}
                   required
@@ -142,7 +142,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                 <TextField
                   fullWidth
                   name="birthday"
-                  label="Brithday"
+                  label="Ngày sinh"
                   type="date"
                   InputLabelProps={{ shrink: true }}
                   value={formData.birthday.toString()}
@@ -164,7 +164,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                 <TextField
                   fullWidth
                   name="phone"
-                  label="Phone number"
+                  label="Số điện thoại"
                   value={formData.phone}
                   onChange={handleChange}
                   required
@@ -174,7 +174,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                 <TextField
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Mật khẩu"
                   type="password"
                   value={formData.password}
                   onChange={handleChange}

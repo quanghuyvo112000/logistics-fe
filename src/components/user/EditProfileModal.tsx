@@ -68,17 +68,17 @@ const EditProfileModal: React.FC<Props> = ({
         !formData.ward ||
         !formData.address
       ) {
-        showMessage("Please fill in all required fields.", "error");
+        showMessage("Vui lòng điền vào tất cả các trường bắt buộc.", "error");
         return;
       }
 
       if (!checkValidateBirthday(String(formData.birthday))) {
-        showMessage("You must be over 18 years old.", "error");
+        showMessage("Bạn phải trên 18 tuổi.", "error");
         return;
       }
 
       if (!checkValidatePhoneNumber(formData.phone)) {
-        showMessage("Invalid phone number. Must be at least 10 digits.", "error");
+        showMessage("Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số.", "error");
         return;
       }
 
@@ -86,7 +86,7 @@ const EditProfileModal: React.FC<Props> = ({
       const response = await updateUserProfile(payload);
 
       if (response.status === 200 && response.data) {
-        showMessage("Profile update successful!", "success");
+        showMessage("Cập nhật hồ sơ thành công!", "success");
 
         // Tạo đối tượng người dùng mới từ response và dữ liệu form
         const updatedUserInfo: UserInfo = {
@@ -102,11 +102,11 @@ const EditProfileModal: React.FC<Props> = ({
         // Đóng modal sau khi cập nhật thành công
         onClose();
       } else {
-        showMessage("Update failed: " + response.message, "error");
+        showMessage("Cập nhật không thành công", "error");
       }
     } catch (error) {
       console.error("Error while updating:", error);
-      showMessage("An error occurred while updating information.", "error");
+      showMessage("Đã xảy ra lỗi khi cập nhật thông tin.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -116,9 +116,9 @@ const EditProfileModal: React.FC<Props> = ({
     <CommonModal
       open={open}
       onClose={onClose}
-      title="Edit information"
+      title="Chỉnh Sửa Thông Tin"
       onConfirm={handleConfirm}
-      confirmText="Save changes"
+      confirmText="Lưu thay đổi"
       loading={isSubmitting}
       maxWidth="md"
     >
@@ -126,7 +126,7 @@ const EditProfileModal: React.FC<Props> = ({
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Full name"
+            label="Họ và tên"
             name="fullName"
             value={formData.fullName || ""}
             onChange={onInputChange}
@@ -147,7 +147,7 @@ const EditProfileModal: React.FC<Props> = ({
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Phone number"
+            label="Số điện thoại"
             name="phone"
             value={formData.phone || ""}
             onChange={onInputChange}
@@ -157,7 +157,7 @@ const EditProfileModal: React.FC<Props> = ({
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
-            label="Birthday"
+            label="Ngày sinh"
             name="birthday"
             type="date"
             value={formData.birthday ? formData.birthday.split("T")[0] : ""}
