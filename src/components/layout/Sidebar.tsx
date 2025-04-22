@@ -47,15 +47,15 @@ const Sidebar = ({ drawerWidth }: Props) => {
 
   const menuItems = [
     { text: 'Dashboard', path: '/dashboard', icon: <Dashboard /> },
-    { text: 'Shipments', path: '/shipments', icon: <LocalShipping /> },
-    { text: 'Warehouses', path: '/warehouses', icon: <Warehouse /> },
-    { text: 'Calendar', path: '/calendar', icon: <CalendarMonth /> },
-    { text: 'Order', path: '/orders', icon: <Inventory /> },
+    { text: 'Lô hàng', path: '/shipments', icon: <LocalShipping /> },
+    { text: 'Kho hàng', path: '/warehouses', icon: <Warehouse /> },
+    { text: 'Lịch', path: '/calendar', icon: <CalendarMonth /> },
+    { text: 'Đặt hàng', path: '/orders', icon: <Inventory /> },
   ];
 
   const settingsItems = [
-    { text: 'Profile', path: '/profile', icon: <Person /> },
-    { text: 'Logout', path: '/authentication', icon: <Logout />, onClick: handleLogout },
+    { text: 'Hồ sơ', path: '/profile', icon: <Person /> },
+    { text: 'Đăng xuất', path: '/authentication', icon: <Logout />, onClick: handleLogout },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -104,7 +104,7 @@ const Sidebar = ({ drawerWidth }: Props) => {
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
-            <ListItemText primary="Settings" />
+            <ListItemText primary="Cài đặt" />
             {openSettings ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
 

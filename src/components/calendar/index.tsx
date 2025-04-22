@@ -45,8 +45,11 @@ export default function Schedules() {
 
       setSchedules(data)
     } catch (err) {
-      console.error("Failed to fetch schedules:", err)
-      setError("Failed to load work schedules. Please try again later.")
+      if (err instanceof Error) {
+        console.error("Failed to fetch schedules:", err.message)
+        setError(err.message)
+
+      }
     } finally {
       hideLoading()
     }

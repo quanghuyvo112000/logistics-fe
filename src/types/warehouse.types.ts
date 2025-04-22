@@ -35,7 +35,6 @@ export interface Warehouse {
   phone: string;
   province: string;
   district: string;
-  ward: string;
   address: string;
   createdAt: string;
   updatedAt: string;

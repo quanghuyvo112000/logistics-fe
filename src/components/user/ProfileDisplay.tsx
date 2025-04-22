@@ -125,7 +125,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
               }}
               onClick={onEditClick}
             >
-              Edit Profile  
+              Chỉnh sửa thông tin 
             </Button>
           </Box>
         </Box>
@@ -136,7 +136,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
           <Grid item xs={12} md={6}>
             <InfoCard elevation={1}>
               <Typography variant="h6" sx={{ mb: 2 }}>
-                Personal Information
+                Thông tin cá nhân
               </Typography>
 
               <Box sx={{ display: "flex", mb: 2 }}>
@@ -144,7 +144,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                   <PersonIcon />
                 </IconWrapper>
                 <Box>
-                  <ProfileLabel>Full Name</ProfileLabel>
+                  <ProfileLabel>Họ và tên</ProfileLabel>
                   <ProfileValue variant="body1">
                     {userInfo.fullName || "Not provided"}
                   </ProfileValue>
@@ -168,7 +168,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                   <PhoneIcon />
                 </IconWrapper>
                 <Box>
-                  <ProfileLabel>Phone</ProfileLabel>
+                  <ProfileLabel>Số điện thoại</ProfileLabel>
                   <ProfileValue variant="body1">
                     {userInfo.phone || "Not provided"}
                   </ProfileValue>
@@ -180,7 +180,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                   <CakeIcon />
                 </IconWrapper>
                 <Box>
-                  <ProfileLabel>Birthday</ProfileLabel>
+                  <ProfileLabel>Ngày sinh</ProfileLabel>
                   <ProfileValue variant="body1">
                     {userInfo.birthday
                       ? formatDate(userInfo.birthday)
@@ -194,7 +194,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
           <Grid item xs={12} md={6}>
             <InfoCard elevation={1}>
               <Typography variant="h6" sx={{ mb: 2 }}>
-                Address Information
+                Thông tin địa chỉ
               </Typography>
 
               <Box sx={{ display: "flex", mb: 2 }}>
@@ -202,7 +202,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                   <MapIcon />
                 </IconWrapper>
                 <Box>
-                  <ProfileLabel>Province</ProfileLabel>
+                  <ProfileLabel>Tỉnh/ Thành phố</ProfileLabel>
                   <ProfileValue variant="body1">
                     {userInfo.province || "Not provided"}
                   </ProfileValue>
@@ -214,7 +214,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                   <LocationOnIcon />
                 </IconWrapper>
                 <Box>
-                  <ProfileLabel>District</ProfileLabel>
+                  <ProfileLabel>Quận/ Thành phố</ProfileLabel>
                   <ProfileValue variant="body1">
                     {userInfo.district || "Not provided"}
                   </ProfileValue>
@@ -226,7 +226,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                   <LocationOnIcon />
                 </IconWrapper>
                 <Box>
-                  <ProfileLabel>Ward</ProfileLabel>
+                  <ProfileLabel>Phường</ProfileLabel>
                   <ProfileValue variant="body1">
                     {userInfo.ward || "Not provided"}
                   </ProfileValue>
@@ -238,7 +238,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                   <LocationOnIcon />
                 </IconWrapper>
                 <Box>
-                  <ProfileLabel>Address</ProfileLabel>
+                  <ProfileLabel>Địa chỉ hiện tại</ProfileLabel>
                   <ProfileValue variant="body1">
                     {userInfo.address || "Not provided"}
                   </ProfileValue>
@@ -250,7 +250,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
           <Grid item xs={12}>
             <InfoCard elevation={1}>
               <Typography variant="h6" sx={{ mb: 2 }}>
-                Account Information
+                Thông tin tài khoản
               </Typography>
 
               <Grid container spacing={2}>
@@ -260,7 +260,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                       <CalendarTodayIcon />
                     </IconWrapper>
                     <Box>
-                      <ProfileLabel>Created At</ProfileLabel>
+                      <ProfileLabel>Ngày tạo</ProfileLabel>
                       <ProfileValue variant="body1">
                         {userInfo.createdAt
                           ? formatDate(userInfo.createdAt)
@@ -276,7 +276,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ userInfo, onEditClick }
                       <UpdateIcon />
                     </IconWrapper>
                     <Box>
-                      <ProfileLabel>Last Updated</ProfileLabel>
+                      <ProfileLabel>Ngày cập nhật</ProfileLabel>
                       <ProfileValue variant="body1">
                         {userInfo.updatedAt
                           ? formatDate(userInfo.updatedAt)

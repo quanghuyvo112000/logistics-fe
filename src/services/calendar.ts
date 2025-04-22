@@ -1,38 +1,5 @@
 import { callApi } from "../components/shared/api"
-
-// Data types
-export interface WorkScheduleResponse {
-  status: number
-  message: string
-  data: WorkSchedule[]
-}
-
-export interface WorkSchedule {
-  id: string
-  nameDriver?: string
-  workDate: string
-  startTime: string
-  endTime: string
-  shift: 'MORNING' | 'AFTERNOON' | 'EVENING' | 'NIGHT'
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED'
-  note: string
-  createdAt: string
-  updatedAt: string
-  driverId?: string
-}
-
-export interface CreateWorkScheduleRequest {
-  workDate: string
-  startTime: string
-  endTime: string
-  shift: 'MORNING' | 'AFTERNOON' | 'EVENING' | 'NIGHT'
-  note: string
-}
-
-export interface UpdateWorkScheduleStatusRequest {
-  scheduleId: string
-  status: 'APPROVED' | 'REJECTED'
-}
+import { CreateWorkScheduleRequest, UpdateWorkScheduleStatusRequest, WorkSchedule, WorkScheduleResponse } from "../types/calendar.types"
 
 // Get all schedules (admin or manager)
 export const fetchWorkSchedules = async (): Promise<WorkSchedule[]> => {

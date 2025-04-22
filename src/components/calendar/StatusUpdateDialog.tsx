@@ -1,9 +1,7 @@
-
-import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material"
+import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"
 import { format, parseISO } from "date-fns"
-import { useState } from "react"
-import { UpdateWorkScheduleStatusRequest } from "../../services/calendar"
-import { statusLabels, WorkingSchedule } from "../../types/calendar.types"
+import { useEffect, useState } from "react"
+import { statusLabels, UpdateWorkScheduleStatusRequest, WorkingSchedule } from "../../types/calendar.types"
 import CommonModal from "../shared/CommonModal"
 
 interface StatusUpdateDialogProps {
@@ -21,32 +19,30 @@ export const StatusUpdateDialog = ({
   onConfirm,
   loading = false,
 }: StatusUpdateDialogProps) => {
-  const [status, setStatus] = useState<"APPROVED" | "REJECTED">("APPROVED")
-  const [error, setError] = useState<string | null>(null)
+  // Use a simple string state instead of a union type
+  const [status, setStatus] = useState("APPROVED")
 
   // Reset form when dialog opens with new schedule
-  if (schedule && open && status !== "APPROVED") {
-    setStatus("APPROVED")
-    setError(null)
-  }
-
-  const handleChange = (event: SelectChangeEvent<"APPROVED" | "REJECTED">) => {
-    setStatus(event.target.value as "APPROVED" | "REJECTED")
-    setError(null)
-  }
+  useEffect(() => {
+    if (open && schedule) {
+      setStatus("APPROVED")
+    }
+  }, [open, schedule])
 
   const handleSubmit = () => {
     if (!schedule) return
 
+    console.log("Submitting status:", status) // Debug log
+
+    // Cast the status to the expected type when submitting
     onConfirm({
       scheduleId: schedule.id,
-      status,
+      status: status as "APPROVED" | "REJECTED",
     })
   }
 
   if (!schedule) return null
 
-  // Use nameDriver from the API if available
   const driverName = schedule.nameDriver || "Tài xế"
 
   return (
@@ -83,13 +79,21 @@ export const StatusUpdateDialog = ({
           )}
         </Box>
 
-        <FormControl fullWidth margin="normal" error={!!error}>
+        <FormControl fullWidth margin="normal">
           <InputLabel id="status-label">Trạng thái</InputLabel>
-          <Select labelId="status-label" value={status} label="Trạng thái" onChange={handleChange}>
+          <Select
+            labelId="status-label"
+            id="status-select"
+            value={status}
+            label="Trạng thái"
+            onChange={(e) => {
+              console.log("Selected value:", e.target.value) // Debug log
+              setStatus(e.target.value)
+            }}
+          >
             <MenuItem value="APPROVED">{statusLabels.APPROVED}</MenuItem>
             <MenuItem value="REJECTED">{statusLabels.REJECTED}</MenuItem>
           </Select>
-          {error && <FormHelperText>{error}</FormHelperText>}
         </FormControl>
       </Box>
     </CommonModal>

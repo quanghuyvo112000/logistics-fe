@@ -86,39 +86,39 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
     setSuccess(null);
 
     if (!form.fullName || !form.birthday || !form.email || !form.phone) {
-      setError("Please fill in all required fields.");
+      setError("Vui lòng điền vào tất cả các trường bắt buộc.");
       return;
     }
 
     if (!checkValidateBirthday(String(form.birthday))) {
-      setError("You must be over 18 years old to register.");
+      setError("Bạn phải trên 18 tuổi mới được đăng ký.");
       return;
     }
 
     if (!checkValidateEmail(form.email)) {
-      setError("Email does not have @ suffix");
+      setError("Email không có hậu tố @.");
       return;
     }
 
     if (!checkValidatePhoneNumber(form.phone)) {
-      setError("Invalid phone number. Must be at least 10 digits.");
+      setError("Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số.");
       return;
     }
 
     if (!form.province || !form.district || !form.ward || !form.address) {
-      setError("Please select full address.");
+      setError("Vui lòng chọn địa chỉ đầy đủ.");
       return;
     }
 
     if (!passwordValid(form.password)) {
       setError(
-        "Password must be at least 8 characters, including uppercase letters, numbers and special characters."
+        "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt."
       );
       return;
     }
 
     if (form.password !== confirmPassword) {
-      setError("Password and Confirm Password do not match.");
+      setError("Mật khẩu và Xác nhận mật khẩu không khớp.");
       return;
     }
 
@@ -126,7 +126,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
     try {
       const res = await createUser(form);
       if (res.status === 201 || res.status === 200 || res.status === 0) {
-        setSuccess(res.message || "Tạo tài khoản thành công!");
+        setSuccess("Tạo tài khoản thành công!");
         setForm({
           fullName: "",
           birthday: "",
@@ -140,9 +140,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
         });
         setConfirmPassword("");
       } else if (res.status === 409) {
-        setError(res.message || "Email đã tồn tại!");
+        setError("Email đã tồn tại!");
       } else {
-        setError(res.message || "Đăng ký thất bại");
+        setError("Đăng ký thất bại");
       }
     } catch (err) {
       console.error("Register failed:", err);
@@ -168,11 +168,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
               gutterBottom
               fontWeight={600}
             >
-              Sign up
+              Đăng ký
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-              Welcome to logistics supply chain platform. Register as a member
-              to experience.
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, textAlign: "center" }}>
+              Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng ký làm thành viên
+              để trải nghiệm.
             </Typography>
 
             <Box component="form" width="100%" noValidate>
@@ -191,7 +191,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Full Name"
+                    label="Họ và tên"
                     name="fullName"
                     value={form.fullName}
                     onChange={handleChange}
@@ -202,7 +202,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Birthday"
+                    label="Ngày sinh"
                     name="birthday"
                     type="date"
                     value={form.birthday}
@@ -229,7 +229,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Phone"
+                    label="Số điện thoại"
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
@@ -253,7 +253,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Password"
+                    label="Mật khẩu"
                     name="password"
                     type={showPassword ? "text" : "password"}
                     value={form.password}
@@ -278,7 +278,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Confirm Password"
+                    label="Xác nhận lại mật khẩu"
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
@@ -325,20 +325,20 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                 fullWidth
                 variant="contained"
                 onClick={() => handleRegister(showLoading, hideLoading)}
-                sx={{ mt: 3, mb: 2, borderRadius: 2, py: 1 }}
+                sx={{ mt: 1, mb: 1, borderRadius: 2, py: 1 }}
               >
-                Create Account
+                Tạo tài khoản
               </Button>
 
               <Typography variant="body2" align="center">
-                Already a member?{" "}
+                Đã là thành viên?{" "}
                 <Link
                   component="button"
                   onClick={toggleForm}
                   underline="hover"
                   sx={{ fontWeight: 600 }}
                 >
-                  Sign in
+                  Đăng nhập
                 </Link>
               </Typography>
             </Box>

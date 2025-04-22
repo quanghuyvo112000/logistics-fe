@@ -37,7 +37,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
       showLoading();
 
       if (!email || !password) {
-        setError("Email and password are required!");
+        setError("Vui lòng nhập email và mật khẩu!");
         return;
       }
 
@@ -56,7 +56,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
       navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Invalid email or password!");
+      setError("E-mail hoặc mật khẩu không hợp lệ!");
     } finally {
       hideLoading();
     }
@@ -68,10 +68,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
         <Container maxWidth="xs">
           <Box display="flex" flexDirection="column" alignItems="center" sx={{ pt: 4 }}>
             <Typography component="h1" variant="h4" gutterBottom>
-              Sign in
+              Đăng nhập
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4, textAlign: "center" }}>
-              Welcome to logistics supply chain platform. Sign in to continue.
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, textAlign: "center" }}>
+              Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng nhập để tiếp tục.
             </Typography>
 
             <Box component="form" width="100%" noValidate>
@@ -87,7 +87,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
               <TextField
                 fullWidth
                 variant="outlined"
-                placeholder="your.email or your.email@example"
+                placeholder="email của bạn có hoặc không hậu tố @"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -98,7 +98,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
               />
 
               <Typography variant="body2" fontWeight={500} sx={{ mb: 1 }}>
-                Password
+                Mật khẩu
               </Typography>
               <TextField
                 fullWidth
@@ -134,7 +134,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
                     sx={{ color: "primary.main" }}
                   />
                 }
-                label="Remember me"
+                label="Ghi nhớ đăng nhập"
                 sx={{ mb: 3 }}
               />
 
@@ -145,18 +145,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
                 onClick={() => handleLogin(showLoading, hideLoading)}
                 sx={{ mb: 3 }}
               >
-                Sign In
+                Đăng nhập
               </Button>
 
               <Box sx={{ textAlign: "center" }}>
                 <Typography variant="body2" color="text.secondary">
-                  Don&apos;t have an account?{" "}
+                  Bạn chưa có tài khoản?{" "}
                   <Link
                     component="button"
                     onClick={toggleForm}
                     sx={{ fontWeight: 600, color: "primary.main", textDecoration: "none" }}
                   >
-                    Sign up
+                    Đăng ký
                   </Link>
                 </Typography>
               </Box>
