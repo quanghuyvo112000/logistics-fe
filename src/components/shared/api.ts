@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, Method } from 'axios';
 import { localStorageHelper } from './localStorageHelper';
 
-const API_BASE_URL = 'http://localhost:8080/api/';
+const API_BASE_URL = 'http://localhost:8081/api/';
 
 export const callApi = async <TResponse = unknown, TData = unknown>(
   method: Method,

@@ -123,7 +123,7 @@ const EditProfileModal: React.FC<Props> = ({
       maxWidth="md"
     >
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             label="Họ và tên"
@@ -133,7 +133,7 @@ const EditProfileModal: React.FC<Props> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             disabled
             fullWidth
@@ -144,7 +144,7 @@ const EditProfileModal: React.FC<Props> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             label="Số điện thoại"
@@ -154,7 +154,7 @@ const EditProfileModal: React.FC<Props> = ({
             margin="normal"
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             label="Ngày sinh"
@@ -166,7 +166,7 @@ const EditProfileModal: React.FC<Props> = ({
             InputLabelProps={{ shrink: true }}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <LocationSelector
             onChange={handleLocationChange}
             value={{

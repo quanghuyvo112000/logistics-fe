@@ -67,7 +67,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Paper sx={{ p: 2, height: "100%" }}>
             <Box
               sx={{
@@ -105,7 +105,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <Paper sx={{ p: 2, height: "100%" }}>
             <Box
               sx={{
@@ -172,7 +172,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
           </Paper>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Paper sx={{ p: 2 }}>
             <Box
               sx={{

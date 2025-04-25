@@ -273,7 +273,7 @@ const DriverCalendar = ({ userRole, initialSchedules, onScheduleChange }: Driver
           : new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayIndex + 1)
 
       daySlots.push(
-        <Grid item xs={12 / 7} key={i}>
+        <Grid size={{ xs: 12 / 7 }} key={i}>
           <DayCell
             day={dayDate}
             currentMonth={currentMonth}

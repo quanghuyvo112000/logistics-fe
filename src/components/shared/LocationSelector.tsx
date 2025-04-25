@@ -72,7 +72,7 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
   return (
     <Box mt={2}>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <FormControl fullWidth size="medium">
             <InputLabel id="province-label">Chọn tỉnh/ Thành phố</InputLabel>
             <Select
@@ -94,7 +94,7 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <FormControl fullWidth size="medium" disabled={!value.province}>
             <InputLabel id="district-label">Chọn quận</InputLabel>
             <Select
@@ -118,7 +118,7 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <FormControl fullWidth size="medium" disabled={!value.district}>
             <InputLabel id="ward-label">Chọn phường</InputLabel>
             <Select
@@ -142,7 +142,7 @@ const LocationSelector: React.FC<Props> = ({ value, onChange }) => {
           </FormControl>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             label="Địa chỉ"

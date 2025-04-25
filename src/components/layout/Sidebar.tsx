@@ -50,7 +50,7 @@ const Sidebar = ({ drawerWidth }: Props) => {
     { text: 'Lô hàng', path: '/shipments', icon: <LocalShipping /> },
     { text: 'Kho hàng', path: '/warehouses', icon: <Warehouse /> },
     { text: 'Lịch', path: '/calendar', icon: <CalendarMonth /> },
-    { text: 'Đặt hàng', path: '/orders', icon: <Inventory /> },
+    { text: 'Đơn hàng', path: '/orders', icon: <Inventory /> },
   ];
 
   const settingsItems = [
