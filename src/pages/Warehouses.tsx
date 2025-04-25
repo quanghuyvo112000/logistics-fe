@@ -1,4 +1,4 @@
-import WarehouseList from "../components/warehouse/WarehouseList"
+import WarehouseList from "../components/warehouse"
 
 function Warehouses() {
   return (

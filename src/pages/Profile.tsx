@@ -1,4 +1,4 @@
-import UserProfileContainer from "../components/user/UserProfileContainer"
+import UserProfileContainer from "../components/user"
 
 function Profile() {
   return (
