@@ -188,7 +188,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
               )}
 
               <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
                     label="Họ và tên"
@@ -199,7 +199,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                     InputProps={{ sx: { bgcolor: "#f9fafb" } }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
                     label="Ngày sinh"
@@ -215,7 +215,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
               </Grid>
 
               <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
                     label="Email"
@@ -226,7 +226,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                     InputProps={{ sx: { bgcolor: "#f9fafb" } }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
                     label="Số điện thoại"
@@ -250,7 +250,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
               />
 
               <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
                     label="Mật khẩu"
@@ -275,7 +275,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
                     label="Xác nhận lại mật khẩu"
