@@ -1,8 +1,11 @@
-import { Grid, TextField } from "@mui/material";
+import { Alert, Box, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { UserInfo } from "../../types/user.types";
-import { checkValidateBirthday, checkValidatePhoneNumber } from "../../utils/validateForm";
+import {
+  checkValidateBirthday,
+  checkValidatePhoneNumber,
+} from "../../utils/validateForm";
 import CommonModal from "../shared/CommonModal";
 import LocationSelector from "../shared/LocationSelector";
 import { updateUserProfile } from "../../services/user";
@@ -23,6 +26,8 @@ const EditProfileModal: React.FC<Props> = ({
   onSuccessUpdate,
 }) => {
   const { showMessage } = useSnackbar();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLocationChange = (location: {
@@ -45,6 +50,7 @@ const EditProfileModal: React.FC<Props> = ({
   const handleConfirm = async () => {
     try {
       setIsSubmitting(true);
+      setSubmitError(null);
 
       // Xây dựng payload
       const payload = {
@@ -68,18 +74,20 @@ const EditProfileModal: React.FC<Props> = ({
         !formData.ward ||
         !formData.address
       ) {
-        showMessage("Vui lòng điền vào tất cả các trường bắt buộc.", "error");
-        return;
+        setSubmitError("Vui lòng điền vào tất cả các trường bắt buộc.");
+        return false;
       }
 
       if (!checkValidateBirthday(String(formData.birthday))) {
-        showMessage("Bạn phải trên 18 tuổi.", "error");
-        return;
+        setSubmitError("Bạn phải trên 18 tuổi.");
+        return false;
       }
 
       if (!checkValidatePhoneNumber(formData.phone)) {
-        showMessage("Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số.", "error");
-        return;
+        setSubmitError(
+          "Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số."
+        );
+        return false;
       }
 
       // Gửi API cập nhật thông tin người dùng
@@ -100,13 +108,15 @@ const EditProfileModal: React.FC<Props> = ({
         onSuccessUpdate?.(updatedUserInfo);
 
         // Đóng modal sau khi cập nhật thành công
-        onClose();
+        return true;
       } else {
         showMessage("Cập nhật không thành công", "error");
+        return false;
       }
     } catch (error) {
       console.error("Error while updating:", error);
       showMessage("Đã xảy ra lỗi khi cập nhật thông tin.", "error");
+      return false;
     } finally {
       setIsSubmitting(false);
     }
@@ -117,67 +127,80 @@ const EditProfileModal: React.FC<Props> = ({
       open={open}
       onClose={onClose}
       title="Chỉnh Sửa Thông Tin"
-      onConfirm={handleConfirm}
+      onConfirm={async () => {
+        const success = await handleConfirm();
+        if (success) {
+          onClose();
+        }
+        return success;
+      }}
       confirmText="Lưu thay đổi"
       loading={isSubmitting}
       maxWidth="md"
     >
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            fullWidth
-            label="Họ và tên"
-            name="fullName"
-            value={formData.fullName || ""}
-            onChange={onInputChange}
-            margin="normal"
-          />
+      <Box mt={2}>
+        {submitError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {submitError}
+          </Alert>
+        )}
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              label="Họ và tên"
+              name="fullName"
+              value={formData.fullName || ""}
+              onChange={onInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              disabled
+              fullWidth
+              label="Email"
+              name="email"
+              value={formData.email || ""}
+              onChange={onInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              label="Số điện thoại"
+              name="phone"
+              value={formData.phone || ""}
+              onChange={onInputChange}
+              margin="normal"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              label="Ngày sinh"
+              name="birthday"
+              type="date"
+              value={formData.birthday ? formData.birthday.split("T")[0] : ""}
+              onChange={onInputChange}
+              margin="normal"
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <LocationSelector
+              onChange={handleLocationChange}
+              value={{
+                province: formData.province || "",
+                district: formData.district || "",
+                ward: formData.ward || "",
+                address: formData.address || "",
+              }}
+            />
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            disabled
-            fullWidth
-            label="Email"
-            name="email"
-            value={formData.email || ""}
-            onChange={onInputChange}
-            margin="normal"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            fullWidth
-            label="Số điện thoại"
-            name="phone"
-            value={formData.phone || ""}
-            onChange={onInputChange}
-            margin="normal"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            fullWidth
-            label="Ngày sinh"
-            name="birthday"
-            type="date"
-            value={formData.birthday ? formData.birthday.split("T")[0] : ""}
-            onChange={onInputChange}
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12 }}>
-          <LocationSelector
-            onChange={handleLocationChange}
-            value={{
-              province: formData.province || "",
-              district: formData.district || "",
-              ward: formData.ward || "",
-              address: formData.address || "",
-            }}
-          />
-        </Grid>
-      </Grid>
+      </Box>
     </CommonModal>
   );
 };

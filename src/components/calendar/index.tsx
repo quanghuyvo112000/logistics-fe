@@ -79,7 +79,7 @@ export default function Schedules() {
                   mb: 4
                 }}
               >
-                <Typography variant="h4" component="h1" gutterBottom>
+                <Typography variant="h5" component="h1" gutterBottom>
                   Lịch Làm Việc Tài Xế
                 </Typography>
               </Box>

@@ -89,3 +89,18 @@ export interface CreateDriverResponse {
 }
 
 export type WarehouseItem = Warehouse
+
+export interface SearchWarehouseLocationsRequest {
+  province: string;
+  district: string;
+}
+export interface WarehouseLocation {
+  id: string;
+  warehouseName: string;
+}
+
+export interface SearchWarehouseLocationsResponse {
+  status: number;
+  message: string;
+  data: WarehouseLocation[];
+}

@@ -1,7 +1,10 @@
+import OrdersPage from "../components/order"
 
 function Orders() {
   return (
-    <div>Order</div>
+    <>
+      <OrdersPage />
+    </>
   )
 }
 

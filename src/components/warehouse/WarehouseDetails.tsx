@@ -26,9 +26,17 @@ import { decryptData } from "../../utils/crypto";
 import AddDriverModal from "./AddDriverModal";
 
 // Component for row details (expanded content)
-const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse, fetchWarehouses: () => void }) => {
-  const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState<boolean>(false);
-  const [isAddDriverModalOpen, setIsAddDriverModalOpen] = useState<boolean>(false);
+const WarehouseDetails = ({
+  warehouse,
+  fetchWarehouses,
+}: {
+  warehouse: Warehouse;
+  fetchWarehouses: () => void;
+}) => {
+  const [isAddManagerModalOpen, setIsAddManagerModalOpen] =
+    useState<boolean>(false);
+  const [isAddDriverModalOpen, setIsAddDriverModalOpen] =
+    useState<boolean>(false);
 
   const handleOpenManagerModal = () => setIsAddManagerModalOpen(true);
   const handleCloseManagerModal = () => setIsAddManagerModalOpen(false);
@@ -40,7 +48,6 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
   const authData = JSON.parse(authDataString || "{}");
   const role = decryptData(authData.role);
 
-
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return "N/A";
     try {
@@ -51,11 +58,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
   };
 
   const formatAddress = (warehouse: Warehouse): string => {
-    return [
-      warehouse.address,
-      warehouse.district,
-      warehouse.province,
-    ]
+    return [warehouse.address, warehouse.district, warehouse.province]
       .filter(Boolean)
       .join(", ");
   };
@@ -145,13 +148,15 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
 
             <Box sx={{ ml: 4 }}>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Họ và tên:</strong> {warehouse.manager?.fullName ?? "N/A"}
+                <strong>Họ và tên:</strong>{" "}
+                {warehouse.manager?.fullName ?? "N/A"}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 <strong>Email:</strong> {warehouse.manager?.email ?? "N/A"}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Số điện thoại:</strong> {warehouse.manager?.phone ?? "N/A"}
+                <strong>Số điện thoại:</strong>{" "}
+                {warehouse.manager?.phone ?? "N/A"}
               </Typography>
               <Typography variant="body2" sx={{ mb: 1 }}>
                 <strong>Ngày sinh:</strong>{" "}
@@ -192,10 +197,11 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                 <DirectionsCarIcon sx={{ mr: 1, verticalAlign: "bottom" }} />
                 Nhân viên giao hàng ({warehouse.drivers.length})
               </Typography>
-              <Button 
-              variant="contained" 
-              size="small" 
-              onClick={handleOpenDriverModal}>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleOpenDriverModal}
+              >
                 Thêm nhân viên
               </Button>
               <AddDriverModal
@@ -203,7 +209,7 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                 onClose={handleCloseDriverModal}
                 data={warehouse.id}
                 fetchWarehouses={fetchWarehouses}
-               />
+              />
             </Box>
 
             {warehouse.drivers.length > 0 ? (
@@ -216,9 +222,15 @@ const WarehouseDetails = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse
                   <TableHead>
                     <TableRow>
                       <TableCell sx={{ fontWeight: "bold" }}>Tên</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Liên lạc</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Phương tiện giao thông</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Địa chỉ hiện tại</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        Liên lạc
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        Phương tiện giao thông
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        Địa chỉ hiện tại
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
