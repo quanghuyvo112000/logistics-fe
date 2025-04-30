@@ -67,7 +67,11 @@ export interface Driver {
     updatedAt: string
     driverId?: string
   }
-  
+
+  export interface WorkScheduleStatus {
+    driverId?: string
+    nameDriver?: string
+  }
   export interface CreateWorkScheduleRequest {
     workDate: string
     startTime: string

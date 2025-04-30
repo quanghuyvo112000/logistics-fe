@@ -1,32 +1,25 @@
-import { Box, Grid, MenuItem, TextField } from "@mui/material";
-import React, { useState } from "react";
-import { useSnackbar } from "../../contexts/SnackbarContext";
-import { CreateDriverPayload } from "../../types/user.types";
-import { passwordValid } from "../../utils/passwordValidation";
-import {
-    checkValidateBirthday,
-    checkValidateEmail,
-    checkValidatePhoneNumber,
-} from "../../utils/validateForm";
-import CommonModal from "../shared/CommonModal";
-import LocationSelector from "../shared/LocationSelector";
-import LoadingHandler from "../shared/loadingHandler";
-import { createDriver } from "../../services/user";
+import { Alert, Box, Grid, MenuItem, TextField } from "@mui/material"
+import type React from "react"
+import { useState } from "react"
+import { useSnackbar } from "../../contexts/SnackbarContext"
+import type { CreateDriverPayload } from "../../types/user.types"
+import { passwordValid } from "../../utils/passwordValidation"
+import { checkValidateBirthday, checkValidateEmail, checkValidatePhoneNumber } from "../../utils/validateForm"
+import CommonModal from "../shared/CommonModal"
+import LocationSelector from "../shared/LocationSelector"
+import LoadingHandler from "../shared/loadingHandler"
+import { createDriver } from "../../services/user"
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
-  data: string;
-  fetchWarehouses: () => void;
+  open: boolean
+  onClose: () => void
+  data: string
+  fetchWarehouses: () => void
 }
 
-const AddDriverModal: React.FC<Props> = ({
-  open,
-  onClose,
-  data,
-  fetchWarehouses,
-}) => {
-  const { showMessage } = useSnackbar();
+const AddDriverModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses }) => {
+  const { showMessage } = useSnackbar()
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState<CreateDriverPayload>({
     fullName: "",
@@ -41,34 +34,33 @@ const AddDriverModal: React.FC<Props> = ({
     vehicleType: "",
     vehiclePlate: "",
     warehouseId: data,
-  });
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const handleLocationChange = (location: {
-    province: string;
-    district: string;
-    ward: string;
-    address: string;
+    province: string
+    district: string
+    ward: string
+    address: string
   }) => {
     setFormData((prev) => ({
       ...prev,
       ...location,
-    }));
-  };
+    }))
+  }
 
-  const handleSubmit = async (
-    showLoading: () => void,
-    hideLoading: () => void
-  ) => {
+  const handleSubmit = async (showLoading: () => void, hideLoading: () => void) => {
     try {
-      showLoading();
+      showLoading()
+      setSubmitError(null)
+
       if (
         !formData.fullName ||
         !formData.birthday ||
@@ -79,47 +71,48 @@ const AddDriverModal: React.FC<Props> = ({
         !formData.ward ||
         !formData.address
       ) {
-        showMessage("Vui lòng điền vào tất cả các trường bắt buộc.", "error");
-        return;
+        setSubmitError("Vui lòng điền vào tất cả các trường bắt buộc.")
+        hideLoading()
+        return false
       }
 
       if (!checkValidateBirthday(String(formData.birthday))) {
-        showMessage("Bạn phải trên 18 tuổi.", "error");
-        return;
+        setSubmitError("Bạn phải trên 18 tuổi.")
+        hideLoading()
+        return false
       }
 
       if (!checkValidatePhoneNumber(formData.phone)) {
-        showMessage(
-          "Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số.",
-          "error"
-        );
-        return;
+        setSubmitError("Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số.")
+        hideLoading()
+        return false
       }
 
       if (!passwordValid(formData.password)) {
-        showMessage(
-          "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt.",
-          "error"
-        );
-        return;
+        setSubmitError("Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt.")
+        hideLoading()
+        return false
       }
 
       if (!checkValidateEmail(formData.email)) {
-        showMessage("Email không có hậu tố @", "error");
-        return;
+        setSubmitError("Email không có hậu tố @")
+        hideLoading()
+        return false
       }
 
-      await createDriver(formData);
-      showMessage("Tạo nhân viên giao hàng thành công!", "success");
-      await fetchWarehouses();
-      onClose();
+      await createDriver(formData)
+
+      showMessage("Tạo nhân viên giao hàng thành công!", "success")
+      await fetchWarehouses()
+      return true
     } catch (error) {
-      console.error(error);
-      showMessage("Đã xảy ra lỗi khi tạo nhân viên giao hàng thành.", "error");
+      console.error(error)
+      showMessage("Đã xảy ra lỗi khi tạo nhân viên giao hàng thành.", "error")
+      return false
     } finally {
-      hideLoading();
+      hideLoading()
     }
-  };
+  }
 
   return (
     <LoadingHandler>
@@ -130,12 +123,23 @@ const AddDriverModal: React.FC<Props> = ({
           title="Thêm Nhân Viên Giao Hàng"
           confirmText="Lưu thông tin"
           loading={false}
-          onConfirm={() => handleSubmit(showLoading, hideLoading)}
+          onConfirm={async () => {
+            const success = await handleSubmit(showLoading, hideLoading)
+            if (success) {
+              onClose()
+            }
+            return success
+          }}
           maxWidth="md"
         >
           <Box mt={2}>
+            {submitError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {submitError}
+              </Alert>
+            )}
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="fullName"
@@ -145,7 +149,7 @@ const AddDriverModal: React.FC<Props> = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="birthday"
@@ -157,7 +161,7 @@ const AddDriverModal: React.FC<Props> = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="email"
@@ -167,7 +171,7 @@ const AddDriverModal: React.FC<Props> = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="phone"
@@ -177,7 +181,7 @@ const AddDriverModal: React.FC<Props> = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   name="password"
@@ -188,7 +192,7 @@ const AddDriverModal: React.FC<Props> = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   select
                   fullWidth
@@ -203,7 +207,7 @@ const AddDriverModal: React.FC<Props> = ({
                   <MenuItem value="VAN">Van</MenuItem>
                 </TextField>
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="vehiclePlate"
@@ -213,7 +217,7 @@ const AddDriverModal: React.FC<Props> = ({
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <LocationSelector
                   value={{
                     province: formData.province,
@@ -229,7 +233,7 @@ const AddDriverModal: React.FC<Props> = ({
         </CommonModal>
       )}
     </LoadingHandler>
-  );
-};
+  )
+}
 
-export default AddDriverModal;
+export default AddDriverModal

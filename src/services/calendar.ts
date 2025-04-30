@@ -1,9 +1,14 @@
 import { callApi } from "../components/shared/api"
-import { CreateWorkScheduleRequest, UpdateWorkScheduleStatusRequest, WorkSchedule, WorkScheduleResponse } from "../types/calendar.types"
+import { CreateWorkScheduleRequest, UpdateWorkScheduleStatusRequest, WorkSchedule, WorkScheduleResponse, WorkScheduleStatus } from "../types/calendar.types"
 
 // Get all schedules (admin or manager)
 export const fetchWorkSchedules = async (): Promise<WorkSchedule[]> => {
   const response = await callApi<WorkScheduleResponse>('GET', 'work-schedules', undefined, true)
+  return response.data
+}
+
+export const fetchWorkStatusSchedules = async (): Promise<WorkScheduleStatus[]> => {
+  const response = await callApi<WorkScheduleResponse>('GET', 'work-schedules/manager-status', undefined, true)
   return response.data
 }
 

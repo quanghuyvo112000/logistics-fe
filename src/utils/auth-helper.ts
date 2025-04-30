@@ -16,7 +16,7 @@ export const getUserRole = (): UserRole | null => {
     const role = decryptData(authData.role)
 
     // Validate that the role is one of the expected values
-    if (role === "ADMIN" || role === "WAREHOUSE_MANAGER" || role === "DRIVER") {
+    if (role === "ADMIN" || role === "WAREHOUSE_MANAGER" || role === "DRIVER" || role === "CUSTOMER") {
       return role as UserRole
     }
 

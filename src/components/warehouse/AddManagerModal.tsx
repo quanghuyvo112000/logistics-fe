@@ -1,4 +1,4 @@
-import { Box, Grid, TextField } from "@mui/material";
+import { Alert, Box, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { CreateManagerPayload } from "../../types/user.types";
@@ -17,11 +17,17 @@ interface Props {
   open: boolean;
   onClose: () => void;
   data: string;
-  fetchWarehouses: () => void
+  fetchWarehouses: () => void;
 }
 
-const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses }) => {
+const AddManagerModal: React.FC<Props> = ({
+  open,
+  onClose,
+  data,
+  fetchWarehouses,
+}) => {
   const { showMessage } = useSnackbar();
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<CreateManagerPayload>({
     fullName: "",
@@ -62,6 +68,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
   ) => {
     try {
       showLoading();
+      setSubmitError(null);
       if (
         !formData.fullName ||
         !formData.birthday ||
@@ -72,43 +79,47 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
         !formData.ward ||
         !formData.address
       ) {
-        showMessage("Vui lòng điền vào tất cả các trường bắt buộc.", "error");
-        return;
+        setSubmitError("Vui lòng điền vào tất cả các trường bắt buộc.");
+        hideLoading();
+        return false;
       }
 
       if (!checkValidateBirthday(String(formData.birthday))) {
-        showMessage("Bạn phải trên 18 tuổi.", "error");
-        return;
+        setSubmitError("Bạn phải trên 18 tuổi.");
+        hideLoading();
+        return false;
       }
 
       if (!checkValidatePhoneNumber(formData.phone)) {
-        showMessage(
-          "Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số.",
-          "error"
+        setSubmitError(
+          "Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số."
         );
-        return;
+        hideLoading();
+        return false;
       }
 
       if (!passwordValid(formData.password)) {
-        showMessage(
-          "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt.",
-          "error"
+        setSubmitError(
+          "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt."
         );
-        return;
+        hideLoading();
+        return false;
       }
 
       if (!checkValidateEmail(formData.email)) {
-        showMessage("Email không có hậu tố @", "error");
-        return;
+        setSubmitError("Email không có hậu tố @");
+        hideLoading();
+        return false;
       }
 
       await createManager(formData);
       showMessage("Tạo quản lý thành công!", "success");
       await fetchWarehouses();
-      onClose();
+      return true;
     } catch (error) {
       console.error(error);
       showMessage("Đã xảy ra lỗi khi tạo quản lý.", "error");
+      return false;
     } finally {
       hideLoading();
     }
@@ -123,12 +134,23 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
           title="Thêm Quản Lý Kho Hàng"
           confirmText="Lưu thông tin"
           loading={false}
-          onConfirm={() => handleSubmit(showLoading, hideLoading)}
+          onConfirm={async () => {
+            const success = await handleSubmit(showLoading, hideLoading)
+            if (success) {
+              onClose()
+            }
+            return success
+          }}
           maxWidth="md"
         >
           <Box mt={2}>
+            {submitError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {submitError}
+              </Alert>
+            )}
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="fullName"
@@ -138,7 +160,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="birthday"
@@ -150,7 +172,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="email"
@@ -160,7 +182,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   name="phone"
@@ -170,7 +192,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                   required
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   name="password"
@@ -182,7 +204,7 @@ const AddManagerModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <LocationSelector
                   value={{
                     province: formData.province,

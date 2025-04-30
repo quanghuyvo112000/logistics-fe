@@ -1,4 +1,5 @@
-import React, { ReactNode } from "react";
+import type React from "react"
+import type { ReactNode } from "react"
 import {
   Dialog,
   DialogTitle,
@@ -9,26 +10,26 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
-  styled
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+  styled,
+} from "@mui/material"
+import CloseIcon from "@mui/icons-material/Close"
 
 interface CommonModalProps {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  children: ReactNode;
-  maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | false;
-  actions?: ReactNode;
-  disableActions?: boolean;
-  onConfirm?: () => void;
-  onCancel?: () => void;
-  confirmText?: string;
-  cancelText?: string;
-  confirmColor?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
-  fullScreen?: boolean;
-  hideCloseIcon?: boolean;
-  loading?: boolean,
+  open: boolean
+  onClose: () => void
+  title: string
+  children: ReactNode
+  maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | false
+  actions?: ReactNode
+  disableActions?: boolean
+  onConfirm?: () => Promise<boolean> | boolean | void
+  onCancel?: () => void
+  confirmText?: string
+  cancelText?: string
+  confirmColor?: "primary" | "secondary" | "error" | "info" | "success" | "warning"
+  fullScreen?: boolean
+  hideCloseIcon?: boolean
+  loading?: boolean
 }
 
 const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
@@ -36,17 +37,17 @@ const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  borderBottom: `1px solid ${theme.palette.divider}`
-}));
+  borderBottom: `1px solid ${theme.palette.divider}`,
+}))
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   padding: theme.spacing(3),
-}));
+}))
 
 const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
   padding: theme.spacing(2),
-  borderTop: `1px solid ${theme.palette.divider}`
-}));
+  borderTop: `1px solid ${theme.palette.divider}`,
+}))
 
 const CommonModal: React.FC<CommonModalProps> = ({
   open,
@@ -62,27 +63,34 @@ const CommonModal: React.FC<CommonModalProps> = ({
   cancelText = "Hủy",
   confirmColor = "primary",
   fullScreen = false,
-  hideCloseIcon = false
+  hideCloseIcon = false,
 }) => {
-  const theme = useTheme();
-  const fullScreenOnMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  
-  // Use either the specified fullScreen value or automatically switch to fullScreen on mobile
-  const isFullScreen = fullScreen || fullScreenOnMobile;
+  const theme = useTheme()
+  const fullScreenOnMobile = useMediaQuery(theme.breakpoints.down("sm"))
 
-  const handleConfirm = () => {
+  // Use either the specified fullScreen value or automatically switch to fullScreen on mobile
+  const isFullScreen = fullScreen || fullScreenOnMobile
+
+  const handleConfirm = async () => {
     if (onConfirm) {
-      onConfirm();
+      // Gọi onConfirm và chỉ đóng modal nếu nó trả về true hoặc undefined
+      const result = await onConfirm()
+      // Chỉ đóng modal nếu result là true hoặc undefined (không phải false)
+      if (result !== false) {
+        onClose()
+      }
+    } else {
+      // Nếu không có onConfirm, thì đóng modal
+      onClose()
     }
-    onClose();
-  };
+  }
 
   const handleCancel = () => {
     if (onCancel) {
-      onCancel();
+      onCancel()
     }
-    onClose();
-  };
+    onClose()
+  }
 
   return (
     <Dialog
@@ -98,21 +106,14 @@ const CommonModal: React.FC<CommonModalProps> = ({
           {title}
         </Typography>
         {!hideCloseIcon && (
-          <IconButton
-            aria-label="close"
-            onClick={onClose}
-            size="small"
-            edge="end"
-          >
+          <IconButton aria-label="close" onClick={onClose} size="small" edge="end">
             <CloseIcon />
           </IconButton>
         )}
       </StyledDialogTitle>
-      
-      <StyledDialogContent dividers>
-        {children}
-      </StyledDialogContent>
-      
+
+      <StyledDialogContent dividers>{children}</StyledDialogContent>
+
       {!disableActions && (
         <StyledDialogActions>
           {actions ? (
@@ -130,7 +131,7 @@ const CommonModal: React.FC<CommonModalProps> = ({
         </StyledDialogActions>
       )}
     </Dialog>
-  );
-};
+  )
+}
 
-export default CommonModal;
+export default CommonModal
