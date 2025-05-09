@@ -32,7 +32,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     weight: "",
     orderPrice: "",
     shippingFee: "",
-    pickupImage: null,
   });
 
   // State for location selectors
@@ -62,7 +61,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { showMessage } = useSnackbar();
@@ -178,10 +176,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
       newErrors.shippingFee = "Phí vận chuyển phải là số không âm";
     }
 
-    if (!formData.pickupImage) {
-      newErrors.pickupImage = "Vui lòng tải lên ảnh đơn hàng";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -191,15 +185,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     setSubmitError(null);
 
     if (!validateForm()) {
-      return;
-    }
-
-    // Kiểm tra lại file ảnh
-    if (!formData.pickupImage) {
-      setErrors((prev) => ({
-        ...prev,
-        pickupImage: "Vui lòng tải lên ảnh đơn hàng",
-      }));
       return;
     }
 
@@ -218,7 +203,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         weight: Number(formData.weight),
         orderPrice: Number(formData.orderPrice),
         shippingFee: Number(formData.shippingFee),
-        pickupImage: formData.pickupImage,
       };
 
       const response = await createOrder(requestData);
@@ -244,7 +228,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         weight: "",
         orderPrice: "",
         shippingFee: "",
-        pickupImage: null,
       });
 
       setSenderLocation({
@@ -261,7 +244,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         address: "",
       });
 
-      setImagePreview(null);
 
       // Call onSuccess callback if provided
       if (onSuccess) {
@@ -297,7 +279,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
       weight: "",
       orderPrice: "",
       shippingFee: "",
-      pickupImage: null,
     });
 
     setSenderLocation({
@@ -317,7 +298,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     setErrors({});
     setSubmitError(null);
     setSuccessMessage(null);
-    setImagePreview(null);
     onClose();
   };
 
@@ -366,10 +346,8 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         <OrderDetails
           formData={formData}
           errors={errors}
-          imagePreview={imagePreview}
           handleInputChange={handleInputChange}
           setFormData={setFormData}
-          setImagePreview={setImagePreview}
           setErrors={setErrors}
         />
 

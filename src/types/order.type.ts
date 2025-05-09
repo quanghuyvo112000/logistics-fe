@@ -16,7 +16,7 @@ export interface FormData {
   weight: string
   orderPrice: string
   shippingFee: string
-  pickupImage: File | null
+  // pickupImage: File | null
 }
 
 export interface FormErrors {
@@ -50,7 +50,6 @@ export interface CreateOrderRequest {
   weight: number
   orderPrice: number
   shippingFee: number
-  pickupImage: File | null
 }
 
 export interface OrderResponse {
@@ -78,6 +77,22 @@ export interface Order {
   status: string;
   isSourceWarehouse?: boolean;
   isPickupDriverNull?: boolean;
+  isDeliveryDriverNull?: boolean;
+  warehouseManagerRole?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AssignShipperRequest {
+  trackingCode: string;
+  driverId: string
+}
+
+export interface AssignWarehouseRequest {
+  trackingCode: string;
+}
+
+export interface OrderConfirmPickupRequest {
+  trackingCode: string;
+  pickupImage: File | null
 }

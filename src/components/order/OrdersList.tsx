@@ -1,11 +1,13 @@
 import type React from "react";
 
-import { Search } from "@mui/icons-material";
+import { Menu, Search } from "@mui/icons-material";
 import {
   Alert,
   Box,
   Button,
+  ButtonGroup,
   Chip,
+  Collapse,
   InputAdornment,
   Paper,
   Table,
@@ -19,14 +21,23 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
+import { useSnackbar } from "../../contexts/SnackbarContext";
 import {
+  assignDeliveryWarehouse,
+  assignLeaveWarehouse,
+  assignWarehouse,
   getAllOrders,
   getByCustomerOrders,
   getByManagerOrders,
+  getByShipperOrders,
 } from "../../services/order";
-import { Order } from "../../types/order.type";
+import { AssignWarehouseRequest, Order } from "../../types/order.type";
 import authHelper from "../../utils/auth-helper";
+import ConfirmPickupModal from "./ConfirmPickupModal";
 import ShipperSelectModal from "./ShipperSelectModal";
+import { getStatusColor, getStatusLabel } from "./util";
+import ConfirmDeliveryModal from "./ConfirmDeliveryModal";
+import ShipperDeliverySelectModal from "./ShipperDeliverySelectModal";
 
 interface OrdersListProps {
   onRefreshRef?: React.MutableRefObject<(() => void) | undefined>;
@@ -41,6 +52,17 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
   const [openModalTrackingCode, setOpenModalTrackingCode] = useState<
     string | null
   >(null);
+  const [openConfirmPickupCode, setOpenConfirmPickupCode] = useState<
+    string | null
+  >(null);
+
+  const [openModalTrackingDeliveryCode, setOpenModalTrackingDeliveryCode] =
+    useState<string | null>(null);
+  const [openConfirmDeliveryCode, setOpenConfirmDeliveryCode] = useState<
+    string | null
+  >(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const { showMessage } = useSnackbar();
 
   const userRole = authHelper.getUserRole() as
     | "ADMIN"
@@ -61,6 +83,10 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
         setError(null);
       } else if (userRole === "CUSTOMER") {
         const response = await getByCustomerOrders();
+        setOrders(response.data);
+        setError(null);
+      } else if (userRole === "DRIVER") {
+        const response = await getByShipperOrders();
         setOrders(response.data);
         setError(null);
       }
@@ -92,71 +118,47 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
     setPage(0);
   };
 
-  const getStatusColor = (
-    status: string
-  ):
-    | "default"
-    | "primary"
-    | "secondary"
-    | "error"
-    | "info"
-    | "success"
-    | "warning" => {
-    switch (status) {
-      case "CREATED":
-        return "default";
-      case "RECEIVED_AT_SOURCE":
-        return "info";
-      case "ASSIGNED_TO_SHIPPER":
-        return "info";
-      case "LEFT_SOURCE":
-        return "info";
-      case "AT_INTERMEDIATE":
-        return "warning";
-      case "LEFT_INTERMEDIATE":
-        return "warning";
-      case "AT_DESTINATION":
-        return "primary";
-      case "OUT_FOR_DELIVERY":
-        return "secondary";
-      case "DELIVERED_SUCCESSFULLY":
-        return "success";
-      case "DELIVERY_FAILED":
-        return "error";
-      default:
-        return "default";
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "CREATED":
-        return "Đã tạo";
-      case "RECEIVED_AT_SOURCE":
-        return "Đã nhận tại kho nguồn";
-      case "ASSIGNED_TO_SHIPPER":
-        return "Đã giao cho shipper";
-      case "LEFT_SOURCE":
-        return "Đã rời kho nguồn";
-      case "AT_INTERMEDIATE":
-        return "Tại kho trung gian";
-      case "LEFT_INTERMEDIATE":
-        return "Đã rời kho trung gian";
-      case "AT_DESTINATION":
-        return "Tại kho đích";
-      case "OUT_FOR_DELIVERY":
-        return "Đang giao hàng";
-      case "DELIVERED_SUCCESSFULLY":
-        return "Giao hàng thành công";
-      case "DELIVERY_FAILED":
-        return "Giao hàng thất bại";
-      default:
-        return status;
-    }
-  };
-
-  const handleButtonClick = (trackingCode: string) => {
+  const handlePickUpShipperClick = (trackingCode: string) => {
     setOpenModalTrackingCode(trackingCode);
+  };
+
+  const handleConfirmPickup = (trackingCode: string) => {
+    setOpenConfirmPickupCode(trackingCode);
+  };
+
+  const handleConfirmDelivery = (trackingCode: string) => {
+    setOpenConfirmDeliveryCode(trackingCode);
+  };
+
+  const handleConfirmWarehouse = async (trackingCode: string) => {
+    const request: AssignWarehouseRequest = {
+      trackingCode,
+    };
+    await assignWarehouse(request);
+    showMessage("Cập nhật thành công trạng thái đơn hàng!", "success");
+    fetchOrders();
+  };
+
+  const handleConfirmLeaveWarehouse = async (trackingCode: string) => {
+    const request: AssignWarehouseRequest = {
+      trackingCode,
+    };
+    await assignLeaveWarehouse(request);
+    showMessage("Cập nhật thành công trạng thái đơn hàng!", "success");
+    fetchOrders();
+  };
+
+  const handlePickUpShipperDeliveryClick = (trackingCode: string) => {
+    setOpenModalTrackingDeliveryCode(trackingCode);
+  };
+
+  const handleConfirmDeliveryWarehouse = async (trackingCode: string) => {
+    const request: AssignWarehouseRequest = {
+      trackingCode,
+    };
+    await assignDeliveryWarehouse(request);
+    showMessage("Cập nhật thành công trạng thái đơn hàng!", "success");
+    fetchOrders();
   };
 
   const filteredOrders = orders.filter(
@@ -204,7 +206,7 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
         <Table sx={{ minWidth: 1200 }} aria-label="orders table">
           <TableHead>
             <TableRow>
-              <TableCell>Mã đơn hàng</TableCell>
+              <TableCell sx={{ minWidth: 300 }}>Mã đơn hàng</TableCell>
               <TableCell sx={{ minWidth: 300 }}>Thông tin người gửi</TableCell>
               <TableCell sx={{ minWidth: 300 }}>Thông tin người nhận</TableCell>
               <TableCell sx={{ minWidth: 150 }} align="right">
@@ -216,16 +218,14 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
               <TableCell sx={{ minWidth: 150 }} align="center">
                 Trạng thái
               </TableCell>
-              <TableCell>Ngày tạo</TableCell>
-              <TableCell>Cập nhật</TableCell>
+              <TableCell sx={{ minWidth: 100 }}>Ngày tạo</TableCell>
+              <TableCell sx={{ minWidth: 100 }}>Cập nhật</TableCell>
               <TableCell sx={{ minWidth: 150 }}>Ảnh nhận hàng</TableCell>
               <TableCell sx={{ minWidth: 150 }}>Ảnh giao hàng</TableCell>
               {orders.some(
                 (order) => order.isSourceWarehouse !== undefined
-              ) && <TableCell sx={{ minWidth: 160 }}>Thông tin thêm</TableCell>}
-              {orders.some(
-                (order) => order.isSourceWarehouse !== undefined
-              ) && <TableCell sx={{ minWidth: 200 }}>Chức năng</TableCell>}
+              ) && <TableCell sx={{ minWidth: 300 }}>Thông tin thêm</TableCell>}
+              <TableCell sx={{ minWidth: 200 }}>Chức năng</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -263,10 +263,10 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
                     />
                   </TableCell>
                   <TableCell>
-                    {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                    {new Date(order.createdAt).toLocaleString("vi-VN")}
                   </TableCell>
                   <TableCell>
-                    {new Date(order.updatedAt).toLocaleDateString("vi-VN")}
+                    {new Date(order.updatedAt).toLocaleString("vi-VN")}
                   </TableCell>
                   <TableCell>
                     {order.pickupImage ? (
@@ -307,27 +307,184 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
                         : "Đơn hàng chưa đến kho bạn quản lý"}
                     </TableCell>
                   )}
-                  {order.isSourceWarehouse !== undefined && (
-                    <TableCell>
-                      {order.isSourceWarehouse ? (
+                  <TableCell>
+                    <Box>
+                      <ButtonGroup
+                        variant="contained"
+                        disabled={
+                          userRole !== "WAREHOUSE_MANAGER" &&
+                          userRole !== "DRIVER"
+                        }
+                      >
                         <Button
-                          disabled={
-                            userRole !== "WAREHOUSE_MANAGER" ||
-                            order.isPickupDriverNull === false
+                          onClick={() =>
+                            setOpenDropdown((prev) =>
+                              prev === order.trackingCode
+                                ? null
+                                : order.trackingCode
+                            )
                           }
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleButtonClick(order.trackingCode)}
                         >
-                          Chọn shipper
+                          <Menu />
                         </Button>
-                      ) : (
-                        <Typography variant="body2" color="textSecondary">
-                          Kho không phải của bạn
-                        </Typography>
-                      )}
-                    </TableCell>
-                  )}
+                      </ButtonGroup>
+
+                      {/* Dropdown nút phụ */}
+                      <Collapse in={openDropdown === order.trackingCode}>
+                        <Box
+                          mt={1}
+                          display="flex"
+                          flexDirection="column"
+                          gap={1}
+                        >
+                          {userRole === "WAREHOUSE_MANAGER" &&
+                            order.warehouseManagerRole === "sourceWarehouseManager" && [
+                              "CREATED",
+                              "ASSIGNED_TO_SHIPPER",
+                              "PICKED_UP_SUCCESSFULLY",
+                              "RECEIVED_AT_SOURCE",
+                            ].includes(order.status) &&(
+                              <>
+                                <Button
+                                  variant="outlined"
+                                  color="info"
+                                  size="small"
+                                  disabled={[
+                                    "ASSIGNED_TO_SHIPPER",
+                                    "PICKED_UP_SUCCESSFULLY",
+                                  ].includes(order.status) ||
+                                      !order.isPickupDriverNull||
+                                    order.isSourceWarehouse === false
+                                  }
+                                  onClick={() =>
+                                    handlePickUpShipperClick(order.trackingCode)
+                                  }
+                                >
+                                  Chọn shipper
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  color="secondary"
+                                  size="small"
+                                  disabled={[
+                                    "CREATED",
+                                    "RECEIVED_AT_SOURCE",
+                                    "ASSIGNED_TO_SHIPPER",
+                                    "LEFT_SOURCE",
+                                  ].includes(order.status)}
+                                  onClick={() =>
+                                    handleConfirmWarehouse(order.trackingCode)
+                                  }
+                                >
+                                  Đã đến kho nhận
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  color="warning"
+                                  size="small"
+                                  disabled={[
+                                    "CREATED",
+                                    "PICKED_UP_SUCCESSFULLY",
+                                    "ASSIGNED_TO_SHIPPER",
+                                    "LEFT_SOURCE",
+                                  ].includes(order.status)}
+                                  onClick={() =>
+                                    handleConfirmLeaveWarehouse(
+                                      order.trackingCode
+                                    )
+                                  }
+                                >
+                                  Rời kho nhận
+                                </Button>
+                              </>
+                            )}
+
+                          {userRole === "DRIVER" && (
+                            <>
+                              <Button
+                                variant="outlined"
+                                color="warning"
+                                size="small"
+                                disabled={order.isDeliveryDriverNull == false || order.pickupImage != null}
+                                onClick={() =>
+                                  handleConfirmPickup(order.trackingCode)
+                                }
+                              >
+                                Lấy hàng
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                color="warning"
+                                size="small"
+                                disabled={order.isDeliveryDriverNull != false || order.deliveryImage != null}
+                                onClick={() =>
+                                  handleConfirmDelivery(order.trackingCode)
+                                }
+                
+                              >
+                                Giao hàng
+                              </Button>
+                            </>
+                          )}
+
+                          {userRole === "WAREHOUSE_MANAGER" &&
+                            order.warehouseManagerRole ===
+                              "sourceWarehouseManager" &&
+                              [
+                                "LEFT_SOURCE",
+                                "AT_DESTINATION",
+                                "OUT_FOR_DELIVERY",
+                              ].includes(order.status) && (
+                              <>
+                                <Button
+                                  variant="outlined"
+                                  color="success"
+                                  size="small"
+                                  disabled={["AT_DESTINATION", "OUT_FOR_DELIVERY"].includes(
+                                    order.status
+                                  )}
+                                  onClick={() =>
+                                    handleConfirmDeliveryWarehouse(
+                                      order.trackingCode
+                                    )
+                                  }
+                                >
+                                  Đến kho giao
+                                </Button>
+                                <Button
+                                  variant="outlined"
+                                  color="success"
+                                  size="small"
+                                  disabled={["LEFT_SOURCE", "OUT_FOR_DELIVERY"].includes(
+                                    order.status
+                                  )}
+                                  onClick={() =>
+                                    handlePickUpShipperDeliveryClick(
+                                      order.trackingCode
+                                    )
+                                  }
+                                >
+                                  Shipper giao hàng
+                                </Button>
+                              </>
+                            )}
+
+                          {userRole === "WAREHOUSE_MANAGER" && (
+                            <Button
+                              variant="outlined"
+                              color="secondary"
+                              size="small"
+                              onClick={() => {
+                                console.log("In đơn:", order.trackingCode);
+                              }}
+                            >
+                              In hóa đơn
+                            </Button>
+                          )}
+                        </Box>
+                      </Collapse>
+                    </Box>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -350,11 +507,36 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
+      {/* Modal */}
       {openModalTrackingCode && (
         <ShipperSelectModal
           trackingCode={openModalTrackingCode}
           onClose={() => setOpenModalTrackingCode(null)}
+          fetchOrders={fetchOrders}
+        />
+      )}
+
+      {openConfirmPickupCode && (
+        <ConfirmPickupModal
+          trackingCode={openConfirmPickupCode}
+          onClose={() => setOpenConfirmPickupCode(null)}
+          fetchOrders={fetchOrders}
+        />
+      )}
+
+      {openModalTrackingDeliveryCode && (
+        <ShipperDeliverySelectModal
+          trackingCode={openModalTrackingDeliveryCode}
+          onClose={() => setOpenModalTrackingDeliveryCode(null)}
+          fetchOrders={fetchOrders}
+        />
+      )}
+
+      {openConfirmDeliveryCode && (
+        <ConfirmDeliveryModal
+          trackingCode={openConfirmDeliveryCode}
+          onClose={() => setOpenConfirmDeliveryCode(null)}
+          fetchOrders={fetchOrders}
         />
       )}
     </Box>

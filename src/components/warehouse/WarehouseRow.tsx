@@ -33,7 +33,7 @@ const WarehouseRow = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse, fe
         <TableCell>
           <Chip
             size="small"
-            label={`${warehouse.drivers.length} driver(s)`}
+            label={`${warehouse.drivers.length} shipper(s)`}
             color={warehouse.drivers.length > 0 ? "primary" : "default"}
             variant={warehouse.drivers.length > 0 ? "filled" : "outlined"}
           />
