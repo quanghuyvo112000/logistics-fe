@@ -8,7 +8,7 @@ export const fetchWorkSchedules = async (): Promise<WorkSchedule[]> => {
 }
 
 export const fetchWorkStatusSchedules = async (): Promise<WorkScheduleStatus[]> => {
-  const response = await callApi<WorkScheduleResponse>('GET', 'work-schedules/manager-status', undefined, true)
+  const response = await callApi<WorkScheduleResponse>('GET', 'work-schedules/list-shipper', undefined, true)
   return response.data
 }
 

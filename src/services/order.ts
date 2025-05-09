@@ -1,6 +1,6 @@
 import { callApi } from "../components/shared/api";
 import { localStorageHelper } from "../components/shared/localStorageHelper";
-import { CreateOrderRequest, OrderResponse } from "../types/order.type";
+import { AssignShipperRequest, AssignWarehouseRequest, CreateOrderRequest, OrderConfirmPickupRequest, OrderResponse } from "../types/order.type";
 import {
   SearchWarehouseLocationsRequest,
   SearchWarehouseLocationsResponse,
@@ -34,9 +34,9 @@ export const createOrder = async (request: CreateOrderRequest) => {
   }
 
   // Nếu có ảnh thì append ảnh
-  if (request.pickupImage) {
-    formData.append("pickupImage", request.pickupImage);
-  }
+  // if (request.pickupImage) {
+  //   formData.append("pickupImage", request.pickupImage);
+  // }
 
   try {
     const response = await callApi<FormData, unknown>(
@@ -54,6 +54,78 @@ export const createOrder = async (request: CreateOrderRequest) => {
     return response;
   } catch (error) {
     console.error("Failed to create order:", error);
+    throw error;
+  }
+};
+
+export const confirmOrderPickup = async (request: OrderConfirmPickupRequest): Promise<void> => {
+  const formData = new FormData();
+  formData.append("trackingCode", request.trackingCode);
+
+  if (request.pickupImage) {
+    formData.append("pickupImage", request.pickupImage);
+  }
+
+  const authDataString = localStorageHelper.getItem<string>("auth_token");
+  let token: string = "";
+  if (authDataString) {
+    const authData = JSON.parse(authDataString);
+    if (authData && authData.token) {
+      token = authData.token;
+    }
+  }
+
+  try {
+    await callApi<FormData, unknown>(
+      "POST",
+      "orders/confirm-pickup",
+      formData,
+      true,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Failed to confirm order pickup:", error);
+    throw error;
+  }
+};
+
+export const confirmOrderPickupDelivery = async (request: OrderConfirmPickupRequest): Promise<void> => {
+  const formData = new FormData();
+  formData.append("trackingCode", request.trackingCode);
+
+  if (request.pickupImage) {
+    formData.append("pickupImage", request.pickupImage);
+  }
+
+  const authDataString = localStorageHelper.getItem<string>("auth_token");
+  let token: string = "";
+  if (authDataString) {
+    const authData = JSON.parse(authDataString);
+    if (authData && authData.token) {
+      token = authData.token;
+    }
+  }
+
+  try {
+    await callApi<FormData, unknown>(
+      "POST",
+      "orders/confirm-pickup-delivery",
+      formData,
+      true,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Failed to confirm order pickup:", error);
     throw error;
   }
 };
@@ -122,6 +194,28 @@ export const getByManagerOrders = async (): Promise<OrderResponse> => {
   }
 };
 
+export const getByShipperOrders = async (): Promise<OrderResponse> => {
+  try {
+    const response = await callApi<OrderResponse>(
+      "GET",
+      "orders/shipper",
+      undefined,
+      true
+    );
+
+    if (response.status === 200 && response.data) {
+      return response;
+    } else {
+      throw new Error(
+        "Failed to fetch order information. Invalid response from server."
+      );
+    }
+  } catch (error) {
+    console.error("Failed to fetch order information:", error);
+    throw error;
+  }
+};
+
 export const getByCustomerOrders = async (): Promise<OrderResponse> => {
   try {
     const response = await callApi<OrderResponse>(
@@ -144,3 +238,97 @@ export const getByCustomerOrders = async (): Promise<OrderResponse> => {
   }
 };
 
+export const assignShipperPickUp = async (
+  request: AssignShipperRequest
+): Promise<AssignShipperRequest> => {
+  try {
+    const response = await callApi<
+      AssignShipperRequest
+    >(
+      "POST",
+      "orders/assign-shipper",
+      request,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error("Error assign shipper pick up:", error);
+    throw error; // Propagate error for further handling
+  }
+};
+
+export const assignWarehouse = async (
+  request: AssignWarehouseRequest
+): Promise<AssignWarehouseRequest> => {
+  try {
+    const response = await callApi<
+      AssignWarehouseRequest
+    >(
+      "POST",
+      "orders/recrived-source",
+      request,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error("Error assign shipper pick up:", error);
+    throw error; // Propagate error for further handling
+  }
+};
+
+export const assignLeaveWarehouse = async (
+  request: AssignWarehouseRequest
+): Promise<AssignWarehouseRequest> => {
+  try {
+    const response = await callApi<
+      AssignWarehouseRequest
+    >(
+      "POST",
+      "orders/leaved-source",
+      request,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error("Error assign shipper pick up:", error);
+    throw error; // Propagate error for further handling
+  }
+};
+
+export const assignDeliveryWarehouse = async (
+  request: AssignWarehouseRequest
+): Promise<AssignWarehouseRequest> => {
+  try {
+    const response = await callApi<
+      AssignWarehouseRequest
+    >(
+      "POST",
+      "orders/delivery-warehouse",
+      request,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error("Error assign shipper pick up:", error);
+    throw error; // Propagate error for further handling
+  }
+};
+
+export const assignShipperDelivery = async (
+  request: AssignShipperRequest
+): Promise<AssignShipperRequest> => {
+  try {
+    const response = await callApi<
+      AssignShipperRequest
+    >(
+      "POST",
+      "orders/assign-shipper-delivery",
+      request,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error("Error assign shipper pick up:", error);
+    throw error; // Propagate error for further handling
+  }
+};

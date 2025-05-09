@@ -1,17 +1,17 @@
 import {
-  Button,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Typography,
+    Button,
+    CircularProgress,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { fetchWorkStatusSchedules } from "../../services/calendar";
-import { assignShipperPickUp } from "../../services/order";
+import { assignShipperDelivery } from "../../services/order";
 import { WorkScheduleStatus } from "../../types/calendar.types";
 import CommonModal from "../shared/CommonModal";
 
@@ -21,7 +21,7 @@ interface ShipperSelectModalProps {
   fetchOrders: () => Promise<void>
 }
 
-const ShipperSelectModal = ({
+const ShipperDeliverySelectModal = ({
   trackingCode,
   onClose,
   fetchOrders
@@ -60,12 +60,12 @@ const ShipperSelectModal = ({
     
       setLoading(true);
       try {
-        await assignShipperPickUp({
+        await assignShipperDelivery({
           trackingCode,
           driverId: selectedShipper,
         });
         onClose();
-        showMessage("Chọn shipper đến lấy hàng thành công!", "success");
+        showMessage("Chọn shipper đến giao hàng thành công!", "success");
         fetchOrders();
         return true;
       } catch (err) {
@@ -137,4 +137,4 @@ const ShipperSelectModal = ({
   );
 };
 
-export default ShipperSelectModal;
+export default ShipperDeliverySelectModal;
