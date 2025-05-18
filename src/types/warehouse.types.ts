@@ -39,6 +39,7 @@ export interface Warehouse {
   createdAt: string;
   updatedAt: string;
   manager: Manager;
+  code: string;
   drivers: Driver[];
 }
 

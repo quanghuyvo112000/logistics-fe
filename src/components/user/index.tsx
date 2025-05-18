@@ -5,17 +5,22 @@ import LoadingHandler from "../shared/loadingHandler";
 import ProfileDisplay from "./ProfileDisplay";
 import EditProfileModal from "./EditProfileModal";
 import { getProfile } from "../../services/user";
-
+import { localStorageHelper } from "../shared/localStorageHelper";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const UserProfileContainer: React.FC = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<UserInfo>>({});
 
   const hasChecked = useRef(false);
 
-  const loadUserProfile = async (showLoading: () => void, hideLoading: () => void) => {
+  const loadUserProfile = async (
+    showLoading: () => void,
+    hideLoading: () => void
+  ) => {
     try {
       if (hasChecked.current) return;
       hasChecked.current = true;
@@ -29,11 +34,20 @@ const UserProfileContainer: React.FC = () => {
       }
     } catch (err) {
       console.error("Error loading profile:", err);
-      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
     } finally {
       hideLoading();
     }
   };
+
+  useEffect(() => {
+    const isPassword = localStorageHelper.getItem<boolean>("isPassword");
+    if (isPassword !== false) {
+      setIsChangeModalOpen(true);
+    }
+  }, []);
 
   const handleEditProfile = () => {
     if (userInfo) {
@@ -44,6 +58,14 @@ const UserProfileContainer: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsEditModalOpen(false);
+  };
+
+  const handleOpenChangeModal = () => {
+    setIsChangeModalOpen(true);
+  };
+
+  const handleCloseChangeModal = () => {
+    setIsChangeModalOpen(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +86,11 @@ const UserProfileContainer: React.FC = () => {
         }, []);
 
         if (error) {
-          return <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>;
+          return (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          );
         }
 
         if (!userInfo) {
@@ -73,13 +99,21 @@ const UserProfileContainer: React.FC = () => {
 
         return (
           <Container maxWidth="lg">
-            <ProfileDisplay userInfo={userInfo} onEditClick={handleEditProfile} />
+            <ProfileDisplay
+              userInfo={userInfo}
+              onEditClick={handleEditProfile}
+              onChangeClick={handleOpenChangeModal}
+            />
             <EditProfileModal
               open={isEditModalOpen}
               onClose={handleCloseModal}
               formData={formData}
               onInputChange={handleInputChange}
               onSuccessUpdate={(updated) => setUserInfo(updated)}
+            />
+            <ChangePasswordModal
+              open={isChangeModalOpen}
+              onClose={handleCloseChangeModal}
             />
           </Container>
         );

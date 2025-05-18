@@ -28,6 +28,18 @@ export interface IntrospectResponse {
   data: boolean;
 }
 
+export interface changePWRequest {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface ChangePWResponse {
+  status: number;
+  message: string;
+  data: string; // hoặc null nếu không trả dữ liệu
+}
+
 export interface RefreshTokenApiResponse {
   status: number;
   message: string;
