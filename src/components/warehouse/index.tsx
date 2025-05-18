@@ -78,7 +78,8 @@ const WarehouseList: React.FC = () => {
     const filtered = warehouses.filter(
       (warehouse) =>
         warehouse.name.toLowerCase().includes(lowerTerm) ||
-        warehouse.province.toLowerCase().includes(lowerTerm)
+        warehouse.province.toLowerCase().includes(lowerTerm) ||
+        warehouse.code.toLowerCase().includes(lowerTerm)
     );
     setFilteredWarehouses(filtered);
     setPage(0); // Reset page to first on search
@@ -144,14 +145,17 @@ const WarehouseList: React.FC = () => {
                     <TableRow>
                       <TableCell width="60px" />
                       <TableCell sx={{ fontWeight: "bold" }}>
-                        Tên kho
+                        Mã kho hàng
                       </TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Tên kho</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>Khu vực</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>
-                        Khu vực
+                        Điện thoại
                       </TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Điện thoại</TableCell>
                       <TableCell sx={{ fontWeight: "bold" }}>Quản lý</TableCell>
-                      <TableCell sx={{ fontWeight: "bold" }}>Nhân viên giao hàng</TableCell>
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        Nhân viên giao hàng
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

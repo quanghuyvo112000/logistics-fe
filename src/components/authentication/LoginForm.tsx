@@ -31,7 +31,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async (showLoading: () => void, hideLoading: () => void) => {
+  const handleLogin = async (
+    showLoading: () => void,
+    hideLoading: () => void
+  ) => {
     try {
       setError(null);
       showLoading();
@@ -42,7 +45,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
       }
 
       const response = await login(email, password, rememberMe);
-      const data = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
+      const data =
+        typeof response.data === "string"
+          ? JSON.parse(response.data)
+          : response.data;
       const token = data.token;
       const role = encryptData(data.role);
 
@@ -53,7 +59,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
       };
 
       localStorageHelper.setItem("auth_token", JSON.stringify(authData));
-      navigate("/dashboard");
+
+      if (data?.isPassword) {
+        localStorageHelper.setItem(
+          "isPassword",
+          JSON.stringify(data.isPassword)
+        );
+        localStorageHelper.setItem("email", data.email)
+        navigate("/profile");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error("Login failed:", error);
       setError("E-mail hoặc mật khẩu không hợp lệ!");
@@ -66,12 +82,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
     <LoadingHandler>
       {(showLoading, hideLoading) => (
         <Container maxWidth="xs">
-          <Box display="flex" flexDirection="column" alignItems="center" sx={{ pt: 4 }}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            sx={{ pt: 4 }}
+          >
             <Typography component="h1" variant="h4" gutterBottom>
               Đăng nhập
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, textAlign: "center" }}>
-              Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng nhập để tiếp tục.
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ mb: 2, textAlign: "center" }}
+            >
+              Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng nhập để
+              tiếp tục.
             </Typography>
 
             <Box component="form" width="100%" noValidate>
@@ -154,7 +180,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
                   <Link
                     component="button"
                     onClick={toggleForm}
-                    sx={{ fontWeight: 600, color: "primary.main", textDecoration: "none" }}
+                    sx={{
+                      fontWeight: 600,
+                      color: "primary.main",
+                      textDecoration: "none",
+                    }}
                   >
                     Đăng ký
                   </Link>

@@ -1,25 +1,37 @@
 import { callApi } from "../components/shared/api";
 import { localStorageHelper } from "../components/shared/localStorageHelper";
-import { IntrospectRequest, IntrospectResponse, LoginRequest, LoginResponse, LogoutRequest, LogoutResponse, RefreshTokenApiResponse } from "../types/auth.types";
+import {
+  changePWRequest,
+  ChangePWResponse,
+  IntrospectRequest,
+  IntrospectResponse,
+  LoginRequest,
+  LoginResponse,
+  LogoutRequest,
+  LogoutResponse,
+  RefreshTokenApiResponse
+} from "../types/auth.types";
 
-export const introspectToken = async (token: string): Promise<IntrospectResponse> => {
+export const introspectToken = async (
+  token: string
+): Promise<IntrospectResponse> => {
   const payload: IntrospectRequest = { token };
 
   try {
     const response = await callApi<IntrospectResponse, IntrospectRequest>(
-      'POST',
-      'auth/introspect',
+      "POST",
+      "auth/introspect",
       payload,
-      false 
+      false
     );
 
     return response;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error: unknown) {
     // Nếu callApi quăng lỗi (như 401), xử lý trả ra giống như API định nghĩa
     return {
       status: 401,
-      message: 'Invalid or expired token',
+      message: "Invalid or expired token",
       data: false,
     };
   }
@@ -27,8 +39,8 @@ export const introspectToken = async (token: string): Promise<IntrospectResponse
 
 export const refreshToken = async (token: string): Promise<string> => {
   const response = await callApi<RefreshTokenApiResponse, { token: string }>(
-    'POST',
-    'auth/refresh-token',
+    "POST",
+    "auth/refresh-token",
     { token },
     false
   );
@@ -70,11 +82,22 @@ export const login = async (
   }
 };
 
+export const changePw = async (payload: changePWRequest): Promise<ChangePWResponse> => {
+  const response = await callApi<ChangePWResponse, changePWRequest>(
+    "POST",
+    "auth/change-password",
+    payload,
+    false
+  );
+
+  return response;
+};
+
 export const logout = async (): Promise<LogoutResponse> => {
   try {
     // Lấy token từ localStorage
-    const authDataString = localStorageHelper.getItem<string>('auth_token');
-    
+    const authDataString = localStorageHelper.getItem<string>("auth_token");
+
     if (authDataString) {
       // Parse chuỗi JSON thành đối tượng
       const authData = JSON.parse(authDataString);
@@ -84,17 +107,18 @@ export const logout = async (): Promise<LogoutResponse> => {
 
         // Gọi API logout với token
         const response = await callApi<LogoutResponse, LogoutRequest>(
-          "POST",  // HTTP method
-          "auth/logout",  // API endpoint
-          { token },  // Gửi token lên server
-          false  // Không cần xác thực (token đã gửi trong request)
+          "POST", // HTTP method
+          "auth/logout", // API endpoint
+          { token }, // Gửi token lên server
+          false // Không cần xác thực (token đã gửi trong request)
         );
 
         // Nếu thành công, xóa token khỏi localStorage
-        localStorageHelper.removeItem('auth_token');
-        
+        localStorageHelper.removeItem("auth_token");
+        localStorageHelper.removeItem("isPassword");
+        localStorageHelper.removeItem("email");
+
         return response;
-        
       } else {
         throw new Error("Token is missing.");
       }
