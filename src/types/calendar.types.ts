@@ -71,6 +71,7 @@ export interface Driver {
   export interface WorkScheduleStatus {
     driverId?: string
     nameDriver?: string
+    vehicleType?: string
   }
   export interface CreateWorkScheduleRequest {
     workDate: string

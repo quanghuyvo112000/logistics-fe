@@ -3,7 +3,6 @@ import type React from "react"
 import { useState } from "react"
 import { useSnackbar } from "../../contexts/SnackbarContext"
 import type { CreateDriverPayload } from "../../types/user.types"
-import { passwordValid } from "../../utils/passwordValidation"
 import { checkValidateBirthday, checkValidateEmail, checkValidatePhoneNumber } from "../../utils/validateForm"
 import CommonModal from "../shared/CommonModal"
 import LocationSelector from "../shared/LocationSelector"
@@ -26,7 +25,6 @@ const AddDriverModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses 
     birthday: "",
     email: "",
     phone: "",
-    password: "",
     province: "",
     district: "",
     ward: "",
@@ -88,11 +86,6 @@ const AddDriverModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses 
         return false
       }
 
-      if (!passwordValid(formData.password)) {
-        setSubmitError("Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt.")
-        hideLoading()
-        return false
-      }
 
       if (!checkValidateEmail(formData.email)) {
         setSubmitError("Email không có hậu tố @")
@@ -177,17 +170,6 @@ const AddDriverModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses 
                   name="phone"
                   label="Số điện thoại"
                   value={formData.phone}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
-                  name="password"
-                  label="Mật khẩu"
-                  type="password"
-                  value={formData.password}
                   onChange={handleChange}
                   required
                 />

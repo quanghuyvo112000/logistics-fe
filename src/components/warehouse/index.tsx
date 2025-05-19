@@ -133,7 +133,7 @@ const WarehouseList: React.FC = () => {
                 </Typography>
                 {/* Search */}
                 <TextField
-                  label="Tìm kiếm tên kho"
+                  label="Tìm kiếm tên hoặc mã kho"
                   size="small"
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}

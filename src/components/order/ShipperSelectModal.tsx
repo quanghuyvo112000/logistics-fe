@@ -18,20 +18,19 @@ import CommonModal from "../shared/CommonModal";
 interface ShipperSelectModalProps {
   trackingCode: string;
   onClose: () => void;
-  fetchOrders: () => Promise<void>
+  fetchOrders: () => Promise<void>;
 }
 
 const ShipperSelectModal = ({
   trackingCode,
   onClose,
-  fetchOrders
+  fetchOrders,
 }: ShipperSelectModalProps) => {
   const [shippers, setShippers] = useState<WorkScheduleStatus[]>([]);
   const [selectedShipper, setSelectedShipper] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { showMessage } = useSnackbar();
-  
 
   useEffect(() => {
     const fetchShippers = async () => {
@@ -56,27 +55,26 @@ const ShipperSelectModal = ({
   };
 
   const handleAssignShipper = async (): Promise<boolean> => {
-      if (!selectedShipper) return false;
-    
-      setLoading(true);
-      try {
-        await assignShipperPickUp({
-          trackingCode,
-          driverId: selectedShipper,
-        });
-        onClose();
-        showMessage("Chọn shipper đến lấy hàng thành công!", "success");
-        fetchOrders();
-        return true;
-      } catch (err) {
-        setError("Không thể gán shipper. Vui lòng thử lại.");
-        console.error("Assign shipper failed:", err);
-        return false;
-      } finally {
-        setLoading(false);
-      }
-    };
-  
+    if (!selectedShipper) return false;
+
+    setLoading(true);
+    try {
+      await assignShipperPickUp({
+        trackingCode,
+        driverId: selectedShipper,
+      });
+      onClose();
+      showMessage("Chọn shipper đến lấy hàng thành công!", "success");
+      fetchOrders();
+      return true;
+    } catch (err) {
+      setError("Không thể gán shipper. Vui lòng thử lại.");
+      console.error("Assign shipper failed:", err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <CommonModal
@@ -118,7 +116,9 @@ const ShipperSelectModal = ({
             >
               {shippers.map((shipper) => (
                 <MenuItem key={shipper.driverId} value={shipper.driverId}>
-                  {shipper.nameDriver || "Không có tên shipper"}
+                  {shipper.nameDriver && shipper.vehicleType
+                    ? `${shipper.nameDriver} - ${shipper.vehicleType}`
+                    : "Không có tên shipper"}
                 </MenuItem>
               ))}
             </Select>

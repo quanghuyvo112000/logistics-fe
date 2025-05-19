@@ -3,7 +3,6 @@ export interface CreateUserPayload {
   birthday: string | Date;
   email: string;
   phone: string;
-  password: string;
   province: string;
   district: string;
   ward: string;

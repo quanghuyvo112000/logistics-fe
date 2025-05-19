@@ -43,8 +43,10 @@ const UserProfileContainer: React.FC = () => {
   };
 
   useEffect(() => {
-    const isPassword = localStorageHelper.getItem<boolean>("isPassword");
-    if (isPassword !== false) {
+    const isPasswordStr = localStorageHelper.getItem<string>("isPassword");
+    const isPassword = isPasswordStr ? JSON.parse(isPasswordStr) : false;
+
+    if (isPassword === true) {
       setIsChangeModalOpen(true);
     }
   }, []);
