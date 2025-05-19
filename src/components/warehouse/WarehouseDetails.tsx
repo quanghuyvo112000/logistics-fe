@@ -25,7 +25,6 @@ import { localStorageHelper } from "../shared/localStorageHelper";
 import { decryptData } from "../../utils/crypto";
 import AddDriverModal from "./AddDriverModal";
 
-// Component for row details (expanded content)
 const WarehouseDetails = ({
   warehouse,
   fetchWarehouses,
