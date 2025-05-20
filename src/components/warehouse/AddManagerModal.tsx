@@ -1,4 +1,4 @@
-import { Alert, Box, Grid, TextField } from "@mui/material";
+import { Alert, Box, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { createManager } from "../../services/user";
@@ -183,6 +183,7 @@ const AddManagerModal: React.FC<Props> = ({
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
+                <Typography variant="h6" align="left"> Địa chỉ thường trú</Typography>
                 <LocationSelector
                   value={{
                     province: formData.province,

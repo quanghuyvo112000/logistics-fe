@@ -1,4 +1,4 @@
-import { Alert, Box, Grid, MenuItem, TextField } from "@mui/material"
+import { Alert, Box, Grid, MenuItem, TextField, Typography } from "@mui/material"
 import type React from "react"
 import { useState } from "react"
 import { useSnackbar } from "../../contexts/SnackbarContext"
@@ -200,6 +200,7 @@ const AddDriverModal: React.FC<Props> = ({ open, onClose, data, fetchWarehouses 
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
+                <Typography variant="h6" align="left"> Địa chỉ thường trú</Typography>
                 <LocationSelector
                   value={{
                     province: formData.province,

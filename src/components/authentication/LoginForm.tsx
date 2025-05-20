@@ -65,7 +65,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
           "isPassword",
           JSON.stringify(data.isPassword)
         );
-        localStorageHelper.setItem("email", data.email)
+        localStorageHelper.setItem("email", data.email);
         navigate("/profile");
       } else {
         navigate("/dashboard");
@@ -100,7 +100,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
               tiếp tục.
             </Typography>
 
-            <Box component="form" width="100%" noValidate>
+            <Box
+              component="form"
+              width="100%"
+              noValidate
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleLogin(showLoading, hideLoading);
+              }}
+            >
               {error && (
                 <Alert severity="error" sx={{ mb: 3 }}>
                   {error}
@@ -168,7 +176,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
                 fullWidth
                 variant="contained"
                 color="primary"
-                onClick={() => handleLogin(showLoading, hideLoading)}
+                type="submit"
                 sx={{ mb: 3 }}
               >
                 Đăng nhập
