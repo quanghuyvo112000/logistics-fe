@@ -1,8 +1,8 @@
-import { Alert, Box, Grid, TextField } from "@mui/material";
+import { Alert, Box, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
+import { createManager } from "../../services/user";
 import { CreateManagerPayload } from "../../types/user.types";
-import { passwordValid } from "../../utils/passwordValidation";
 import {
   checkValidateBirthday,
   checkValidateEmail,
@@ -11,7 +11,6 @@ import {
 import CommonModal from "../shared/CommonModal";
 import LocationSelector from "../shared/LocationSelector";
 import LoadingHandler from "../shared/loadingHandler";
-import { createManager } from "../../services/user";
 
 interface Props {
   open: boolean;
@@ -34,7 +33,6 @@ const AddManagerModal: React.FC<Props> = ({
     birthday: "",
     email: "",
     phone: "",
-    password: "",
     province: "",
     district: "",
     ward: "",
@@ -93,14 +91,6 @@ const AddManagerModal: React.FC<Props> = ({
       if (!checkValidatePhoneNumber(formData.phone)) {
         setSubmitError(
           "Số điện thoại không hợp lệ. Phải có ít nhất 10 chữ số."
-        );
-        hideLoading();
-        return false;
-      }
-
-      if (!passwordValid(formData.password)) {
-        setSubmitError(
-          "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, số và ký tự đặc biệt."
         );
         hideLoading();
         return false;
@@ -193,18 +183,7 @@ const AddManagerModal: React.FC<Props> = ({
                 />
               </Grid>
               <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
-                  name="password"
-                  label="Mật khẩu"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12 }}>
+                <Typography variant="h6" align="left"> Địa chỉ thường trú</Typography>
                 <LocationSelector
                   value={{
                     province: formData.province,

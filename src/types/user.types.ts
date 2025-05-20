@@ -3,13 +3,23 @@ export interface CreateUserPayload {
   birthday: string | Date;
   email: string;
   phone: string;
-  password: string;
   province: string;
   district: string;
   ward: string;
   address: string;
 }
 
+export interface CreateCustomerPayload {
+  fullName: string;
+  birthday: string | Date;
+  email: string;
+  password: string;
+  phone: string;
+  province: string;
+  district: string;
+  ward: string;
+  address: string;
+}
 export interface CreateManagerPayload extends CreateUserPayload {
   warehouseId: string;
 }

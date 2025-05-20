@@ -118,7 +118,9 @@ const ShipperDeliverySelectModal = ({
             >
               {shippers.map((shipper) => (
                 <MenuItem key={shipper.driverId} value={shipper.driverId}>
-                  {shipper.nameDriver || "Không có tên shipper"}
+                  {shipper.nameDriver && shipper.vehicleType
+                    ? `${shipper.nameDriver} - ${shipper.vehicleType}`
+                    : "Không có tên shipper"}
                 </MenuItem>
               ))}
             </Select>

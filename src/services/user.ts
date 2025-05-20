@@ -1,5 +1,5 @@
 import { callApi } from "../components/shared/api";
-import { CreateDriverPayload, CreateManagerPayload, CreateUserPayload, CreateUserResponse, UpdateUserRequest, UpdateUserResponse, UserInfoResponse } from "../types/user.types";
+import { CreateCustomerPayload, CreateDriverPayload, CreateManagerPayload, CreateUserResponse, UpdateUserRequest, UpdateUserResponse, UserInfoResponse } from "../types/user.types";
 import { formatDateToYMD } from "../utils/validateForm";
 
 // Hàm gọi API lấy thông tin người dùng (GET /user/info)
@@ -91,11 +91,11 @@ export const createManager = async (
 };
 
 export const createUser = async (
-  userData: CreateUserPayload
+  userData: CreateCustomerPayload
 ): Promise<CreateUserResponse> => {
   try {
     // Đảm bảo birthday có định dạng yyyy-MM-dd
-    const formattedData: CreateUserPayload = {
+    const formattedData: CreateCustomerPayload = {
       ...userData,
       birthday:
         typeof userData.birthday === "string"

@@ -1,14 +1,30 @@
 import {
-    KeyboardArrowDown as KeyboardArrowDownIcon,
-    KeyboardArrowUp as KeyboardArrowUpIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
 } from "@mui/icons-material";
 import { Chip, Collapse, IconButton, TableCell, TableRow } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Warehouse } from "../../types/warehouse.types";
 import WarehouseDetails from "./WarehouseDetails";
 
-const WarehouseRow = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse, fetchWarehouses: () => void }) => {
+const WarehouseRow = ({
+  warehouse,
+  fetchWarehouses,
+  isChecked,
+}: {
+  warehouse: Warehouse;
+  fetchWarehouses: () => void;
+  isChecked: boolean;
+}) => {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (isChecked) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [isChecked]);
 
   return (
     <React.Fragment>
@@ -23,13 +39,12 @@ const WarehouseRow = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse, fe
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {warehouse.name}
+          {warehouse.code}
         </TableCell>
+        <TableCell>{warehouse.name}</TableCell>
         <TableCell>{warehouse.province}</TableCell>
         <TableCell>{warehouse.phone}</TableCell>
-        <TableCell>
-          {warehouse.manager?.fullName ?? "N/A"}
-        </TableCell>{" "}
+        <TableCell>{warehouse.manager?.fullName ?? "N/A"}</TableCell>{" "}
         <TableCell>
           <Chip
             size="small"
@@ -40,9 +55,12 @@ const WarehouseRow = ({ warehouse, fetchWarehouses }: { warehouse: Warehouse, fe
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <WarehouseDetails warehouse={warehouse} fetchWarehouses={fetchWarehouses} />
+            <WarehouseDetails
+              warehouse={warehouse}
+              fetchWarehouses={fetchWarehouses}
+            />
           </Collapse>
         </TableCell>
       </TableRow>

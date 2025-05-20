@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { createUser } from "../../services/user";
-import { CreateUserPayload } from "../../types/user.types";
+import { CreateCustomerPayload } from "../../types/user.types";
 import {
   // passwordRequirements,
   passwordValid,
@@ -31,7 +31,7 @@ interface RegisterFormProps {
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
-  const [form, setForm] = useState<CreateUserPayload>({
+  const [form, setForm] = useState<CreateCustomerPayload>({
     fullName: "",
     birthday: "",
     email: "",
@@ -170,12 +170,24 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
             >
               Đăng ký
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, textAlign: "center" }}>
-              Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng ký làm thành viên
-              để trải nghiệm.
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ mb: 2, textAlign: "center" }}
+            >
+              Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng ký làm
+              thành viên để trải nghiệm.
             </Typography>
 
-            <Box component="form" width="100%" noValidate>
+            <Box
+              component="form"
+              width="100%"
+              noValidate
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleRegister(showLoading, hideLoading);
+              }}
+            >
               {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
                   {error}
@@ -324,7 +336,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={() => handleRegister(showLoading, hideLoading)}
+                type="submit"
                 sx={{ mt: 1, mb: 1, borderRadius: 2, py: 1 }}
               >
                 Tạo tài khoản

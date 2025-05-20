@@ -6,12 +6,11 @@ import MainContent from "./components/layout/MainContent";
 import Sidebar from "./components/layout/Sidebar";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 import Authentication from "./pages/Authentication";
+import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
-import Shipments from "./pages/Shipments";
 import Warehouses from "./pages/Warehouses";
-import Calendar from "./pages/Calendar";
 
 const drawerWidth = 240;
 
@@ -28,7 +27,6 @@ function AppLayout() {
         <MainContent drawerWidth={drawerWidth}>
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/shipments" element={<Shipments />} />
             <Route path="/warehouses" element={<Warehouses />} />
             <Route path="/Calendar" element={<Calendar />} />
             <Route path="/profile" element={<Profile />} />

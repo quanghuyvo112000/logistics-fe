@@ -16,9 +16,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { getAllWarehouse, getWarehouse } from "../../services/warehouse";
 import { Warehouse } from "../../types/warehouse.types";
-import { decryptData } from "../../utils/crypto";
+import authHelper from "../../utils/auth-helper";
 import LoadingHandler from "../shared/loadingHandler";
-import { localStorageHelper } from "../shared/localStorageHelper";
 import WarehouseRow from "./WarehouseRow";
 
 const WarehouseList: React.FC = () => {
@@ -27,24 +26,30 @@ const WarehouseList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
+  const [isChecked, setIsChecked] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const hasChecked = useRef(false);
 
-  const authDataString = localStorageHelper.getItem<string>("auth_token");
-  const authData = JSON.parse(authDataString || "{}");
-  const role = decryptData(authData.role);
+    const userRole = authHelper.getUserRole() as
+    | "ADMIN"
+    | "WAREHOUSE_MANAGER"
+    | "CUSTOMER"
+    | "DRIVER"
+    | null;
+
 
   const fetchWarehouses = async () => {
     try {
       let result: Warehouse[] = [];
 
-      if (role === "ADMIN") {
+      if (userRole === "ADMIN") {
         const response = await getAllWarehouse();
         result = response.data;
-      } else if (role === "WAREHOUSE_MANAGER") {
+      } else if (userRole === "WAREHOUSE_MANAGER") {
         const response = await getWarehouse();
         result = response.data ? [response.data] : [];
+        setIsChecked(true);
       }
 
       setWarehouses(result);
@@ -133,7 +138,7 @@ const WarehouseList: React.FC = () => {
                 </Typography>
                 {/* Search */}
                 <TextField
-                  label="Tìm kiếm tên kho"
+                  label="Tìm kiếm tên hoặc mã kho"
                   size="small"
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
@@ -143,7 +148,7 @@ const WarehouseList: React.FC = () => {
                 <Table aria-label="collapsible table">
                   <TableHead>
                     <TableRow>
-                      <TableCell width="60px" />
+                      <TableCell width="2px" />
                       <TableCell sx={{ fontWeight: "bold" }}>
                         Mã kho hàng
                       </TableCell>
@@ -169,6 +174,7 @@ const WarehouseList: React.FC = () => {
                           key={warehouse.id}
                           warehouse={warehouse}
                           fetchWarehouses={fetchWarehouses}
+                          isChecked= {isChecked}
                         />
                       ))}
 
