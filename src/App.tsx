@@ -11,19 +11,20 @@ import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
 import Warehouses from "./pages/Warehouses";
+import History from "./pages/History";
 
 const drawerWidth = 240;
 
 function AppLayout() {
   const location = useLocation();
-  const isAuthRoute = location.pathname === "/authentication";
+  const isNoLayoutRoute = ["/", "/authentication"].includes(location.pathname);
 
   return (
     <>
       <CssBaseline />
-      {!isAuthRoute && <Header />}
-      {!isAuthRoute && <Sidebar drawerWidth={drawerWidth} />}
-      {!isAuthRoute ? (
+      {!isNoLayoutRoute && <Header />}
+      {!isNoLayoutRoute && <Sidebar drawerWidth={drawerWidth} />}
+      {!isNoLayoutRoute ? (
         <MainContent drawerWidth={drawerWidth}>
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
@@ -35,10 +36,11 @@ function AppLayout() {
         </MainContent>
       ) : (
         <Routes>
+          <Route path="/" element={<History />} />
           <Route path="/authentication" element={<Authentication />} />
         </Routes>
       )}
-      {!isAuthRoute && <Footer drawerWidth={drawerWidth} />}
+      {!isNoLayoutRoute && <Footer drawerWidth={drawerWidth} />}
     </>
   );
 }
