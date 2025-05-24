@@ -12,6 +12,7 @@ export const createOrder = async (request: CreateOrderRequest) => {
   // Duyệt qua các field dạng string/number
   formData.append("sourceWarehouseId", request.sourceWarehouseId);
   formData.append("destinationWarehouseId", request.destinationWarehouseId);
+  formData.append("senderName", request.senderName);
   formData.append("senderPhone", request.senderPhone);
   formData.append("senderAddress", request.senderAddress);
   formData.append("receiverName", request.receiverName);
@@ -20,6 +21,7 @@ export const createOrder = async (request: CreateOrderRequest) => {
   formData.append("weight", request.weight.toString());
   formData.append("orderPrice", request.orderPrice.toString());
   formData.append("shippingFee", request.shippingFee.toString());
+  formData.append("expectedDeliveryTime", request.expectedDeliveryTime);
 
   const authDataString = localStorageHelper.getItem<string>("auth_token");
   let token: string = "";

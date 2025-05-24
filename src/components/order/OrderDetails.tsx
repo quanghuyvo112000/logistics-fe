@@ -1,12 +1,8 @@
-import {
-  Grid,
-  InputAdornment,
-  TextField,
-  Typography
-} from "@mui/material";
+import { Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import type React from "react";
 // import { Delete, Upload } from "@mui/icons-material";
 import { FormData, FormErrors } from "../../types/order.type";
+import { formatCurrency, unformatCurrency } from "../../utils/moneyFormat";
 
 interface OrderDetailsProps {
   formData: FormData;
@@ -27,25 +23,11 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
 }) => {
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const weight = parseFloat(e.target.value);
-    let shippingFee = 0;
-
-    if (weight < 5) {
-      shippingFee = 15000;
-    } else if (weight >= 5 && weight < 10) {
-      shippingFee = 20000;
-    } else if (weight >= 10 && weight < 15) {
-      shippingFee = 25000;
-    } else if (weight >= 15 && weight < 20) {
-      shippingFee = 30000;
-    } else if (weight >= 20) {
-      shippingFee = 35000;
-    }
 
     // Update the formData with the new weight and shippingFee
     setFormData((prev) => ({
       ...prev,
       weight: weight.toString(),
-      shippingFee: shippingFee.toString(),
     }));
 
     // Clear any errors related to weight
@@ -85,9 +67,14 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             fullWidth
             label="Giá trị đơn hàng"
             name="orderPrice"
-            type="number"
-            value={formData.orderPrice}
-            onChange={handleInputChange}
+            value={formatCurrency(formData.orderPrice)}
+            onChange={(e) => {
+              const rawValue = unformatCurrency(e.target.value);
+              setFormData((prev) => ({
+                ...prev,
+                orderPrice: rawValue,
+              }));
+            }}
             error={!!errors.orderPrice}
             helperText={errors.orderPrice}
             InputProps={{
@@ -105,7 +92,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             name="shippingFee"
             type="number"
             disabled
-            value={formData.shippingFee}
+            value={formatCurrency(formData.shippingFee)}
             onChange={handleInputChange}
             error={!!errors.shippingFee}
             helperText={errors.shippingFee}

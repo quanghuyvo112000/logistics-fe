@@ -1,5 +1,13 @@
 import { callApi } from "../components/shared/api";
-import { CreateWarehousePayload, CreateWarehouseResponse, WarehouseListResponse, WarehouseResponse } from "../types/warehouse.types";
+import {
+  CreateWarehousePayload,
+  CreateWarehouseResponse,
+  LookUpShippingInfoRequest,
+  ShippingInfoRequest,
+  ShippingInfoResponse,
+  WarehouseListResponse,
+  WarehouseResponse,
+} from "../types/warehouse.types";
 import { formatDateToYMD } from "../utils/validateForm";
 
 export const createWarehouse = async (
@@ -25,7 +33,9 @@ export const createWarehouse = async (
     if (response.status === 201 || response.status === 200) {
       return response;
     } else {
-      throw new Error("Failed to create warehouse manager. Invalid response from server.");
+      throw new Error(
+        "Failed to create warehouse manager. Invalid response from server."
+      );
     }
   } catch (error) {
     console.error("Error creating warehouse manager:", error);
@@ -42,10 +52,15 @@ export const getAllWarehouse = async (): Promise<WarehouseListResponse> => {
       true
     );
 
-    if ((response.status === 200 || response.status === 0) && Array.isArray(response.data)) {
+    if (
+      (response.status === 200 || response.status === 0) &&
+      Array.isArray(response.data)
+    ) {
       return response;
     } else {
-      throw new Error("Failed to fetch warehouse list. Invalid response format.");
+      throw new Error(
+        "Failed to fetch warehouse list. Invalid response format."
+      );
     }
   } catch (error) {
     console.error("Failed to fetch warehouse list:", error);
@@ -69,6 +84,54 @@ export const getWarehouse = async (): Promise<WarehouseResponse> => {
     }
   } catch (error) {
     console.error("Failed to fetch warehouse:", error);
+    throw error;
+  }
+};
+
+export const calculateShippingInfo = async (
+  requestData: ShippingInfoRequest
+): Promise<ShippingInfoResponse> => {
+  try {
+    const response = await callApi<ShippingInfoResponse>(
+      "POST",
+      "warehouse-locations/shipping/calculate",
+      requestData,
+      true
+    );
+
+    if ((response.status === 200 || response.status === 201) && response.data) {
+      return response;
+    } else {
+      throw new Error(
+        "Failed to calculate shipping info. Invalid response from server."
+      );
+    }
+  } catch (error) {
+    console.error("Error calculating shipping info:", error);
+    throw error;
+  }
+};
+
+export const lookUpShippingInfo = async (
+  requestData: LookUpShippingInfoRequest
+): Promise<ShippingInfoResponse> => {
+  try {
+    const response = await callApi<ShippingInfoResponse>(
+      "POST",
+      "warehouse-locations/shipping/lookup",
+      requestData,
+      false
+    );
+
+    if ((response.status === 200 || response.status === 201) && response.data) {
+      return response;
+    } else {
+      throw new Error(
+        "Failed to look up shipping info. Invalid response from server."
+      );
+    }
+  } catch (error) {
+    console.error("Error calculating shipping info:", error);
     throw error;
   }
 };

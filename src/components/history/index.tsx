@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Box,
   Button,
   Grid,
   InputAdornment,
   Paper,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -13,12 +16,19 @@ import { useState } from "react";
 import { fetchHistoryOrder } from "../../services/history";
 import { OrderHistoryItem } from "../../types/history";
 import OrderHistoryTimeline from "./OrderHistoryTimeline";
+import { TabPanel } from "../shared/TabPanel";
+import ShippingFeeCalculator from "./ShippingFeeCalculator";
 
 const HistoryPage: React.FC = () => {
+  const [tabIndex, setTabIndex] = useState(0); // <-- state quản lý tab
   const [trackingCode, setTrackingCode] = useState("");
   const [histories, setHistories] = useState<OrderHistoryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setTabIndex(newValue);
+  };
 
   const handleSubmit = async () => {
     if (!trackingCode.trim()) {
@@ -33,7 +43,6 @@ const HistoryPage: React.FC = () => {
     try {
       const res = await fetchHistoryOrder({ trackingCode });
       setHistories(res.data.histories);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setError(
         "Không thể tìm thấy thông tin đơn hàng. Vui lòng kiểm tra lại mã đơn hàng."
@@ -46,17 +55,30 @@ const HistoryPage: React.FC = () => {
 
   return (
     <Box id="home" py={6}>
-      <Box>
-        <Paper
-          elevation={3}
-          sx={{
-            p: { xs: 3, md: 5 },
-            borderRadius: 2,
-            maxWidth: "900px",
-            mx: "auto",
-          }}
+      <Paper
+        elevation={3}
+        sx={{
+          p: { xs: 3, md: 5 },
+          borderRadius: 2,
+          maxWidth: "900px",
+          mx: "auto",
+        }}
+      >
+        <Tabs
+          value={tabIndex}
+          onChange={handleTabChange}
+          centered
+          textColor="primary"
+          indicatorColor="primary"
         >
-          <Box textAlign="center" mb={5}>
+          <Tab label="Tra cứu đơn hàng" />
+          <Tab label="Cước Vận Chuyển" />
+          <Tab label="Tra bưu cục" />
+        </Tabs>
+
+        <TabPanel value={tabIndex} index={0}>
+          {/* Tra cứu đơn hàng */}
+          <Box textAlign="center" mb={5} mt={3}>
             <Typography
               variant="h3"
               component="h1"
@@ -144,8 +166,40 @@ const HistoryPage: React.FC = () => {
               <OrderHistoryTimeline histories={histories} />
             </Box>
           ) : null}
-        </Paper>
-      </Box>
+        </TabPanel>
+
+        <TabPanel value={tabIndex} index={1}>
+          {/* Cước Vận Chuyển */}
+          <Typography
+            variant="h3"
+            component="h1"
+            textAlign="center"
+            gutterBottom
+            fontWeight="bold"
+            color="primary"
+          >
+            Cước Vận Chuyển
+          </Typography>
+          <ShippingFeeCalculator />
+        </TabPanel>
+
+        <TabPanel value={tabIndex} index={2}>
+          {/* Tra bưu cục */}
+          <Typography
+            variant="h3"
+            component="h1"
+            textAlign="center"
+            gutterBottom
+            fontWeight="bold"
+            color="primary"
+          >
+            Tra cứu bưu cục
+          </Typography>
+          <Typography color="text.secondary">
+            Danh sách các bưu cục sẽ hiển thị ở đây...
+          </Typography>
+        </TabPanel>
+      </Paper>
     </Box>
   );
 };
