@@ -1,13 +1,21 @@
-import { Alert, Box, Button, CircularProgress, Snackbar } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useSnackbar } from "../../contexts/SnackbarContext";
 import { createOrder } from "../../services/order";
+import { calculateShippingInfo } from "../../services/warehouse";
 import { FormData, FormErrors, LocationValue } from "../../types/order.type";
 import CommonModal from "../shared/CommonModal";
 import OrderDetails from "./OrderDetails";
 import ReceiverInformation from "./ReceiverInformation";
 import SenderInformation from "./SenderInformation";
-import { useSnackbar } from "../../contexts/SnackbarContext";
 
 interface CreateOrderModalProps {
   open: boolean;
@@ -24,14 +32,16 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
   const [formData, setFormData] = useState<FormData>({
     sourceWarehouseId: "",
     destinationWarehouseId: "",
+    senderName: "",
     senderPhone: "",
     senderAddress: "",
     receiverName: "",
     receiverPhone: "",
     receiverAddress: "",
     weight: "",
-    orderPrice: "",
+    orderPrice: 0,
     shippingFee: "",
+    expectedDeliveryTime: "",
   });
 
   // State for location selectors
@@ -64,6 +74,71 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const { showMessage } = useSnackbar();
+
+  const [, setLoadingShippingFee] = useState(false);
+
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  useEffect(() => {
+    const fetchShippingFee = async () => {
+      if (!formData.sourceWarehouseId || !formData.destinationWarehouseId)
+        return;
+
+      try {
+        setLoadingShippingFee(true);
+
+        const response = await calculateShippingInfo({
+          fromWarehouseId: formData.sourceWarehouseId,
+          toWarehouseId: formData.destinationWarehouseId,
+        });
+
+        const weight = parseFloat(formData.weight);
+        let baseFee = 0;
+        let extraFee = 0;
+
+        if (!isNaN(weight) && weight > 0) {
+          if (weight < 5) {
+            baseFee = 15000;
+          } else if (weight < 10) {
+            baseFee = 20000;
+          } else if (weight < 15) {
+            baseFee = 25000;
+          } else if (weight < 20) {
+            baseFee = 30000;
+          } else {
+            baseFee = 35000;
+          }
+
+          if (weight > 5) {
+            const extraKg = weight - 5;
+            extraFee = Math.ceil(extraKg) * 2000;
+          }
+        }
+
+        const distanceFee = Number(response.data.shippingFee);
+        const totalFee = baseFee + extraFee + distanceFee;
+
+        setTotalAmount(totalFee + Number(formData.orderPrice));
+
+        setFormData((prev) => ({
+          ...prev,
+          shippingFee: totalFee.toString(),
+          expectedDeliveryTime: response.data.estimatedDeliveryTime,
+        }));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingShippingFee(false);
+      }
+    };
+
+    fetchShippingFee();
+  }, [
+    formData.sourceWarehouseId,
+    formData.destinationWarehouseId,
+    formData.weight,
+    formData.orderPrice,
+  ]);
 
   // Update sender address when location changes
   useEffect(() => {
@@ -126,6 +201,10 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
 
     if (!formData.destinationWarehouseId) {
       newErrors.destinationWarehouseId = "Vui lòng chọn kho nhận hàng";
+    }
+
+    if (!formData.senderName) {
+      newErrors.senderName = "Vui lòng nhập tên người gửi";
     }
 
     if (!formData.senderPhone) {
@@ -195,6 +274,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
       const requestData = {
         sourceWarehouseId: formData.sourceWarehouseId,
         destinationWarehouseId: formData.destinationWarehouseId,
+        senderName: formData.senderName,
         senderPhone: formData.senderPhone,
         senderAddress: formData.senderAddress,
         receiverName: formData.receiverName,
@@ -203,8 +283,8 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         weight: Number(formData.weight),
         orderPrice: Number(formData.orderPrice),
         shippingFee: Number(formData.shippingFee),
+        expectedDeliveryTime: formData.expectedDeliveryTime,
       };
-
       const response = await createOrder(requestData);
 
       if (response) {
@@ -220,14 +300,16 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
       setFormData({
         sourceWarehouseId: "",
         destinationWarehouseId: "",
+        senderName: "",
         senderPhone: "",
         senderAddress: "",
         receiverName: "",
         receiverPhone: "",
         receiverAddress: "",
         weight: "",
-        orderPrice: "",
+        orderPrice: 0,
         shippingFee: "",
+        expectedDeliveryTime: "",
       });
 
       setSenderLocation({
@@ -243,7 +325,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         ward: "",
         address: "",
       });
-
 
       // Call onSuccess callback if provided
       if (onSuccess) {
@@ -271,14 +352,16 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     setFormData({
       sourceWarehouseId: "",
       destinationWarehouseId: "",
+      senderName: "",
       senderPhone: "",
       senderAddress: "",
       receiverName: "",
       receiverPhone: "",
       receiverAddress: "",
       weight: "",
-      orderPrice: "",
+      orderPrice: 0,
       shippingFee: "",
+      expectedDeliveryTime: "",
     });
 
     setSenderLocation({
@@ -343,6 +426,14 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           setFormData={setFormData}
         />
 
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-start", mt: 4, gap: 2 }}
+        >
+          <Typography sx={{ fontWeight: "bold" }}>
+            Thời gian dự kiến giao: {formData.expectedDeliveryTime}.
+          </Typography>
+        </Box>
+
         <OrderDetails
           formData={formData}
           errors={errors}
@@ -350,7 +441,17 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           setFormData={setFormData}
           setErrors={setErrors}
         />
-
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Tổng tiền thanh toán:{" "}
+            {new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(totalAmount)}
+          </Typography>{" "}
+        </Box>
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}
         >

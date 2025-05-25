@@ -105,3 +105,43 @@ export interface SearchWarehouseLocationsResponse {
   message: string;
   data: WarehouseLocation[];
 }
+
+export interface ShippingInfoRequest {
+  fromWarehouseId: string;
+  toWarehouseId: string;
+}
+
+export interface ShippingInfo {
+  shippingFee: number;
+  estimatedDeliveryTime: string;
+}
+
+
+export interface ShippingInfoResponse {
+  status: number;
+  message: string;
+  data: ShippingInfo;
+}
+
+export interface LookUpShippingInfoRequest {
+  fromProvince: string;
+  toProvince: string;
+}
+
+export interface LookUpWarehouseRequest {
+  province: string;
+}
+
+export interface LookUpWarehouse {
+  warehouseName: string;
+  province: string;
+  district: string;
+  address: string;
+  phone: string;
+}
+
+export interface LookUpWarehouseResponse {
+  status: number;
+  message: string;
+  data: LookUpWarehouse[];
+}

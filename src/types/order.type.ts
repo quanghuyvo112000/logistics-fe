@@ -8,14 +8,17 @@ export interface LocationValue {
 export interface FormData {
   sourceWarehouseId: string
   destinationWarehouseId: string
+  senderName: string
   senderPhone: string
   senderAddress: string
   receiverName: string
   receiverPhone: string
   receiverAddress: string
   weight: string
-  orderPrice: string
+  orderPrice: number
   shippingFee: string
+  expectedDeliveryTime: string
+
   // pickupImage: File | null
 }
 
@@ -42,6 +45,7 @@ export interface Warehouse {
 export interface CreateOrderRequest {
   sourceWarehouseId: string
   destinationWarehouseId: string
+  senderName: string
   senderPhone: string
   senderAddress: string
   receiverName: string
@@ -50,6 +54,8 @@ export interface CreateOrderRequest {
   weight: number
   orderPrice: number
   shippingFee: number
+  expectedDeliveryTime: string
+
 }
 
 export interface OrderResponse {
@@ -79,6 +85,7 @@ export interface Order {
   isPickupDriverNull?: boolean;
   isDeliveryDriverNull?: boolean;
   warehouseManagerRole?: string;
+  expectedDeliveryTime: string;
   createdAt: string;
   updatedAt: string;
 }
