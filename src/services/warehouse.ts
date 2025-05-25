@@ -3,6 +3,8 @@ import {
   CreateWarehousePayload,
   CreateWarehouseResponse,
   LookUpShippingInfoRequest,
+  LookUpWarehouseRequest,
+  LookUpWarehouseResponse,
   ShippingInfoRequest,
   ShippingInfoResponse,
   WarehouseListResponse,
@@ -119,6 +121,30 @@ export const lookUpShippingInfo = async (
     const response = await callApi<ShippingInfoResponse>(
       "POST",
       "warehouse-locations/shipping/lookup",
+      requestData,
+      false
+    );
+
+    if ((response.status === 200 || response.status === 201) && response.data) {
+      return response;
+    } else {
+      throw new Error(
+        "Failed to look up shipping info. Invalid response from server."
+      );
+    }
+  } catch (error) {
+    console.error("Error calculating shipping info:", error);
+    throw error;
+  }
+};
+
+export const lookUpWarehouse = async (
+  requestData: LookUpWarehouseRequest
+): Promise<LookUpWarehouseResponse> => {
+  try {
+    const response = await callApi<LookUpWarehouseResponse>(
+      "POST",
+      "warehouse-locations/lookup",
       requestData,
       false
     );

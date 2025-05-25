@@ -127,3 +127,21 @@ export interface LookUpShippingInfoRequest {
   fromProvince: string;
   toProvince: string;
 }
+
+export interface LookUpWarehouseRequest {
+  province: string;
+}
+
+export interface LookUpWarehouse {
+  warehouseName: string;
+  province: string;
+  district: string;
+  address: string;
+  phone: string;
+}
+
+export interface LookUpWarehouseResponse {
+  status: number;
+  message: string;
+  data: LookUpWarehouse[];
+}

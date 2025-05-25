@@ -15,9 +15,10 @@ import type React from "react";
 import { useState } from "react";
 import { fetchHistoryOrder } from "../../services/history";
 import { OrderHistoryItem } from "../../types/history";
-import OrderHistoryTimeline from "./OrderHistoryTimeline";
 import { TabPanel } from "../shared/TabPanel";
+import OrderHistoryTimeline from "./OrderHistoryTimeline";
 import ShippingFeeCalculator from "./ShippingFeeCalculator";
+import WarehouseLookup from "./WarehouseLookup";
 
 const HistoryPage: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0); // <-- state quản lý tab
@@ -177,6 +178,8 @@ const HistoryPage: React.FC = () => {
             gutterBottom
             fontWeight="bold"
             color="primary"
+            mb={5}
+            mt={3}
           >
             Cước Vận Chuyển
           </Typography>
@@ -192,12 +195,12 @@ const HistoryPage: React.FC = () => {
             gutterBottom
             fontWeight="bold"
             color="primary"
+            mb={5}
+            mt={3}
           >
             Tra cứu bưu cục
           </Typography>
-          <Typography color="text.secondary">
-            Danh sách các bưu cục sẽ hiển thị ở đây...
-          </Typography>
+          <WarehouseLookup />
         </TabPanel>
       </Paper>
     </Box>

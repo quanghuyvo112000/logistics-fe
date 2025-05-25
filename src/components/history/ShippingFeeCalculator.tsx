@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Calculator } from "lucide-react";
 import React, { useState } from "react";
 import { lookUpShippingInfo } from "../../services/warehouse";
 import { LookUpShippingInfoRequest } from "../../types/warehouse.types";
@@ -100,7 +101,7 @@ const ShippingFeeCalculator: React.FC = () => {
     <Box>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Typography fontWeight={'bold'} mb={1}>
+          <Typography fontWeight={"bold"} mb={1}>
             Gửi từ:
           </Typography>
           <LocationSelector
@@ -111,7 +112,7 @@ const ShippingFeeCalculator: React.FC = () => {
           />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Typography fontWeight={'bold'} mb={1}>
+          <Typography fontWeight={"bold"} mb={1}>
             Gửi đến:
           </Typography>
           <LocationSelector
@@ -122,7 +123,7 @@ const ShippingFeeCalculator: React.FC = () => {
           />
         </Grid>
         <Grid size={{ xs: 12, md: 12 }}>
-          <Typography fontWeight={'bold'} mb={2}>
+          <Typography fontWeight={"bold"} mb={2}>
             Trọng lượng
           </Typography>
           <TextField
@@ -139,8 +140,10 @@ const ShippingFeeCalculator: React.FC = () => {
             variant="contained"
             color="primary"
             onClick={handleCalculate}
-            disabled={loading}
+            disabled={loading || !fromLocation.province || !toLocation.province || !weight}
+            startIcon={<Calculator />}
             fullWidth
+            sx={{ height: "50px", whiteSpace: "nowrap" }}
           >
             Tính cước
           </Button>
@@ -169,10 +172,18 @@ const ShippingFeeCalculator: React.FC = () => {
             textAlign: "center",
           }}
         >
-          <Typography variant="h6" fontWeight={600} mb={1} textTransform={"uppercase"} marginBottom={2}>
+          <Typography
+            variant="h6"
+            fontWeight={600}
+            mb={1}
+            textTransform={"uppercase"}
+            marginBottom={2}
+          >
             tổng tiền cước vận chuyển
           </Typography>
-          <Typography variant="h3" color="red" my={2}>{result.fee.toLocaleString()} VND</Typography>
+          <Typography variant="h3" color="red" my={2}>
+            {result.fee.toLocaleString()} VND
+          </Typography>
           <Typography>Thời gian dự kiến giao: {result.dateRange}</Typography>
         </Box>
       )}
