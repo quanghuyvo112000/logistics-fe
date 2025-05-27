@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/OrderRow.tsx
-import React from "react";
+import { Menu } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -11,7 +11,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Menu } from "@mui/icons-material";
+import React from "react";
+import { getPaymentStatusLabel, getPaymentStatusColor } from "./util";
 
 interface OrderRowProps {
   order: any;
@@ -63,11 +64,19 @@ const OrderRow: React.FC<OrderRowProps> = ({
       </TableCell>
       <TableCell align="right">{order.weight} kg</TableCell>
       <TableCell align="right">
-        {new Intl.NumberFormat("vi-VN").format(
-          order.orderPrice + order.shippingFee
-        )}
+        {new Intl.NumberFormat("vi-VN").format(order.orderPrice)}
       </TableCell>
-      <TableCell align="center">
+      <TableCell align="right">
+        {new Intl.NumberFormat("vi-VN").format(order.shippingFee)}
+      </TableCell>
+      <TableCell align="left">
+        <Chip 
+          label={getPaymentStatusLabel(order.paymentStatus)}
+          color={getPaymentStatusColor(order.paymentStatus)}
+          size="small"
+        />
+      </TableCell>
+      <TableCell align="left">
         <Chip
           label={getStatusLabel(order.status)}
           color={getStatusColor(order.status)}

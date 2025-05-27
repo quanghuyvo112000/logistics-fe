@@ -1,6 +1,6 @@
 import { callApi } from "../components/shared/api";
 import { localStorageHelper } from "../components/shared/localStorageHelper";
-import { AssignShipperRequest, AssignWarehouseRequest, CreateOrderRequest, OrderConfirmPickupRequest, OrderResponse } from "../types/order.type";
+import { AssignShipperRequest, AssignWarehouseRequest, CreateOrderRequest, OrderConfirmDeliveryRequest, OrderConfirmPickupRequest, OrderResponse } from "../types/order.type";
 import {
   SearchWarehouseLocationsRequest,
   SearchWarehouseLocationsResponse,
@@ -63,6 +63,8 @@ export const createOrder = async (request: CreateOrderRequest) => {
 export const confirmOrderPickup = async (request: OrderConfirmPickupRequest): Promise<void> => {
   const formData = new FormData();
   formData.append("trackingCode", request.trackingCode);
+  formData.append("paymentStatus", request.paymentStatus);
+
 
   if (request.pickupImage) {
     formData.append("pickupImage", request.pickupImage);
@@ -96,7 +98,7 @@ export const confirmOrderPickup = async (request: OrderConfirmPickupRequest): Pr
   }
 };
 
-export const confirmOrderPickupDelivery = async (request: OrderConfirmPickupRequest): Promise<void> => {
+export const confirmOrderPickupDelivery = async (request: OrderConfirmDeliveryRequest): Promise<void> => {
   const formData = new FormData();
   formData.append("trackingCode", request.trackingCode);
 

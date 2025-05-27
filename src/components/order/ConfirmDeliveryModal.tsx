@@ -1,14 +1,14 @@
 import { Upload } from "@mui/icons-material"; // Icon upload
 import {
-    Box,
-    Button,
-    FormHelperText,
-    Typography,
+  Box,
+  Button,
+  FormHelperText,
+  Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { confirmOrderPickupDelivery } from "../../services/order";
-import { OrderConfirmPickupRequest } from "../../types/order.type";
+import { OrderConfirmDeliveryRequest } from "../../types/order.type";
 import CommonModal from "../shared/CommonModal";
   
   interface ConfirmPickupModalProps {
@@ -34,7 +34,7 @@ import CommonModal from "../shared/CommonModal";
       }
   
       setLoading(true);
-      const request: OrderConfirmPickupRequest = {
+      const request: OrderConfirmDeliveryRequest = {
         trackingCode,
         pickupImage,
       };

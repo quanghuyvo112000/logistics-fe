@@ -64,3 +64,30 @@ export const getStatusLabel = (status: string) => {
         return status;
     }
   };
+
+  export const getPaymentStatusColor = (
+    status: string
+  ):
+    | "default"
+    | "success"
+    | "warning" => {
+    switch (status) {
+      case "NOTPAID":
+        return "default";
+      case "PAID":
+        return "success";
+      default:
+        return "default";
+    }
+  };
+
+  export const getPaymentStatusLabel = (status: string) => {
+    switch (status) {
+      case "NOTPAID":
+        return "Chưa thanh toán";
+      case "PAID":
+        return "Đã thanh toán";
+      default:
+        return status;
+    }
+  };

@@ -118,11 +118,11 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
         const distanceFee = Number(response.data.shippingFee);
         const totalFee = baseFee + extraFee + distanceFee;
 
-        setTotalAmount(totalFee + Number(formData.orderPrice));
+        setTotalAmount(totalFee);
 
         setFormData((prev) => ({
           ...prev,
-          shippingFee: totalFee.toString(),
+          shippingFee: distanceFee.toString(),
           expectedDeliveryTime: response.data.estimatedDeliveryTime,
         }));
       } catch (error) {
@@ -137,7 +137,6 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
     formData.sourceWarehouseId,
     formData.destinationWarehouseId,
     formData.weight,
-    formData.orderPrice,
   ]);
 
   // Update sender address when location changes
@@ -445,7 +444,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Tổng tiền thanh toán:{" "}
+          Thanh toán cước phí:{" "}
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",

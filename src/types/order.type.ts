@@ -86,6 +86,7 @@ export interface Order {
   isDeliveryDriverNull?: boolean;
   warehouseManagerRole?: string;
   expectedDeliveryTime: string;
+  paymentStatus: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -99,7 +100,18 @@ export interface AssignWarehouseRequest {
   trackingCode: string;
 }
 
+export enum PaymentStatus {
+    NOTPAID = "NOTPAID",
+    PAID = "PAID"
+}
+
 export interface OrderConfirmPickupRequest {
+  trackingCode: string;
+  paymentStatus:string;
+  pickupImage: File | null
+}
+
+export interface OrderConfirmDeliveryRequest {
   trackingCode: string;
   pickupImage: File | null
 }
