@@ -55,7 +55,21 @@ export interface CreateOrderRequest {
   orderPrice: number
   shippingFee: number
   expectedDeliveryTime: string
+}
 
+export interface OrderResponse {
+  trackingCode: string
+}
+
+export interface TrackingCodeRequest {
+  trackingCode: string
+}
+
+
+export interface CreateOrderResponse {
+  status: number
+  message: string
+  data: OrderResponse
 }
 
 export interface OrderResponse {
@@ -87,6 +101,7 @@ export interface Order {
   warehouseManagerRole?: string;
   expectedDeliveryTime: string;
   paymentStatus: string;
+  shippingPaymentStatus: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -99,15 +114,8 @@ export interface AssignShipperRequest {
 export interface AssignWarehouseRequest {
   trackingCode: string;
 }
-
-export enum PaymentStatus {
-    NOTPAID = "NOTPAID",
-    PAID = "PAID"
-}
-
 export interface OrderConfirmPickupRequest {
   trackingCode: string;
-  paymentStatus:string;
   pickupImage: File | null
 }
 

@@ -2,14 +2,16 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   CircularProgress,
+  FormControlLabel,
   Snackbar,
   Typography,
 } from "@mui/material";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
-import { createOrder } from "../../services/order";
+import { createOrder, createVNPayPayment } from "../../services/order";
 import { calculateShippingInfo } from "../../services/warehouse";
 import { FormData, FormErrors, LocationValue } from "../../types/order.type";
 import CommonModal from "../shared/CommonModal";
@@ -79,6 +81,8 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
 
   const [totalAmount, setTotalAmount] = useState(0);
 
+  const [wantsToPay, setWantsToPay] = useState(false);
+
   useEffect(() => {
     const fetchShippingFee = async () => {
       if (!formData.sourceWarehouseId || !formData.destinationWarehouseId)
@@ -122,7 +126,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
 
         setFormData((prev) => ({
           ...prev,
-          shippingFee: distanceFee.toString(),
+          shippingFee: totalFee.toString(),
           expectedDeliveryTime: response.data.estimatedDeliveryTime,
         }));
       } catch (error) {
@@ -293,7 +297,20 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
       }
 
       // Hiển thị thông báo thành công
-      setSuccessMessage("Đơn hàng đã được tạo thành công!");
+      setSuccessMessage(
+        "Đơn hàng đã được tạo thành công!. Vui lòng thành toán"
+      );
+
+      if (wantsToPay) {
+        // Gọi API thanh toán VNPay
+        const paymentUrl = await createVNPayPayment(
+          totalAmount,
+          response.data.trackingCode
+        );
+
+        // Chuyển hướng sang URL thanh toán VNPay (hoặc mở popup, iframe tùy app)
+        window.location.href = paymentUrl;
+      }
 
       // Reset form
       setFormData({
@@ -444,13 +461,24 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({
           sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Thanh toán cước phí:{" "}
+            Thanh toán cước phí:{" "}
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
             }).format(totalAmount)}
           </Typography>{" "}
         </Box>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={wantsToPay}
+              onChange={(e) => setWantsToPay(e.target.checked)}
+              color="primary"
+            />
+          }
+          label="Bạn có muốn thanh toán cước phí không?"
+        />
+
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}
         >

@@ -1,31 +1,60 @@
-import React, { useState } from "react";
-import { CircularProgress, Backdrop } from "@mui/material";
+import { Backdrop } from "@mui/material";
+import React, { useCallback, useState } from "react";
+import { BackWheel, Car, CarContainer, FrontWheel, LoadingContainer, LoadingText, Road, RoadContainer, StyledBackdrop } from "./util";
 
-interface LoadingHandlerProps {
+interface CarLoadingHandlerProps {
   children: (
     showLoading: () => void,
-    hideLoading: () => void
+    hideLoading: () => void,
+    isLoading: boolean
   ) => React.ReactNode;
+  loadingText?: string;
+  backdropProps?: Partial<React.ComponentProps<typeof Backdrop>>;
 }
 
-const LoadingHandler: React.FC<LoadingHandlerProps> = ({ children }) => {
-  const [loading, setLoading] = useState(false);
+const CarLoadingHandler: React.FC<CarLoadingHandlerProps> = ({ 
+  children, 
+  loadingText = "Đang tải...",
+  backdropProps = {}
+}) => {
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const showLoading = (): void => setLoading(true);
-  const hideLoading = (): void => setLoading(false);
+  const showLoading = useCallback((): void => {
+    setLoading(true);
+  }, []);
+
+  const hideLoading = useCallback((): void => {
+    setLoading(false);
+  }, []);
+
+  const carLoadingComponent = (
+    <LoadingContainer>
+      <RoadContainer>
+        <Road />
+        <CarContainer>
+          <Car>
+            <FrontWheel />
+            <BackWheel />
+          </Car>
+        </CarContainer>
+      </RoadContainer>
+      <LoadingText variant="h6">
+        {loadingText}
+      </LoadingText>
+    </LoadingContainer>
+  );
 
   return (
     <>
-      {children(showLoading, hideLoading)}
-      <Backdrop
-        style={{zIndex: 1000}}
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      {children(showLoading, hideLoading, loading)}
+      <StyledBackdrop
         open={loading}
+        {...backdropProps}
       >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+        {carLoadingComponent}
+      </StyledBackdrop>
     </>
   );
 };
 
-export default LoadingHandler;
+export default CarLoadingHandler;

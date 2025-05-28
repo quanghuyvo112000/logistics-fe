@@ -15,6 +15,7 @@ import React from "react";
 import { getPaymentStatusLabel, getPaymentStatusColor } from "./util";
 
 interface OrderRowProps {
+  index: number;
   order: any;
   userRole: string | null;
   openDropdown: string | null;
@@ -25,12 +26,13 @@ interface OrderRowProps {
   handleConfirmWarehouse: (code: string) => void;
   handleConfirmLeaveWarehouse: (code: string) => void;
   handleConfirmPickup: (code: string) => void;
-  handleConfirmDelivery: (code: string) => void;
+  handleConfirmDelivery: (code: string, orderPrice: number, shippingFee: number) => void;
   handleConfirmDeliveryWarehouse: (code: string) => void;
   handlePickUpShipperDeliveryClick: (code: string) => void;
 }
 
 const OrderRow: React.FC<OrderRowProps> = ({
+  index,
   order,
   userRole,
   openDropdown,
@@ -46,7 +48,13 @@ const OrderRow: React.FC<OrderRowProps> = ({
   handlePickUpShipperDeliveryClick,
 }) => {
   return (
-    <TableRow key={order.trackingCode} hover>
+    <TableRow
+      sx={{
+        backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
+      }}
+      key={order.trackingCode}
+      hover
+    >
       <TableCell component="th" scope="row">
         {order.trackingCode}
       </TableCell>
@@ -70,7 +78,14 @@ const OrderRow: React.FC<OrderRowProps> = ({
         {new Intl.NumberFormat("vi-VN").format(order.shippingFee)}
       </TableCell>
       <TableCell align="left">
-        <Chip 
+        <Chip
+          label={getPaymentStatusLabel(order.shippingPaymentStatus)}
+          color={getPaymentStatusColor(order.shippingPaymentStatus)}
+          size="small"
+        />
+      </TableCell>
+      <TableCell align="left">
+        <Chip
           label={getPaymentStatusLabel(order.paymentStatus)}
           color={getPaymentStatusColor(order.paymentStatus)}
           size="small"
@@ -228,7 +243,7 @@ const OrderRow: React.FC<OrderRowProps> = ({
                       order.isDeliveryDriverNull !== false ||
                       order.deliveryImage != null
                     }
-                    onClick={() => handleConfirmDelivery(order.trackingCode)}
+                    onClick={() => handleConfirmDelivery(order.trackingCode, order.orderPrice, order.shippingFee)}
                   >
                     Giao hàng
                   </Button>

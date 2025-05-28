@@ -7,10 +7,8 @@ import { formatCurrency, unformatCurrency } from "../../utils/moneyFormat";
 interface OrderDetailsProps {
   formData: FormData;
   errors: FormErrors;
-  // imagePreview: string | null;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
-  // setImagePreview: React.Dispatch<React.SetStateAction<string | null>>;
   setErrors: React.Dispatch<React.SetStateAction<FormErrors>>;
 }
 

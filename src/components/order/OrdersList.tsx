@@ -55,9 +55,11 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
 
   const [openModalTrackingDeliveryCode, setOpenModalTrackingDeliveryCode] =
     useState<string | null>(null);
-  const [openConfirmDeliveryCode, setOpenConfirmDeliveryCode] = useState<
-    string | null
-  >(null);
+  const [openConfirmDeliveryCode, setOpenConfirmDeliveryCode] = useState<{
+    trackingCode: string;
+    orderPrice: number;
+    shippingFee: number;
+  } | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { showMessage } = useSnackbar();
 
@@ -123,8 +125,12 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
     setOpenConfirmPickupCode(trackingCode);
   };
 
-  const handleConfirmDelivery = (trackingCode: string) => {
-    setOpenConfirmDeliveryCode(trackingCode);
+  const handleConfirmDelivery = (
+    trackingCode: string,
+    orderPrice: number,
+    shippingFee: number
+  ) => {
+    setOpenConfirmDeliveryCode({ trackingCode, orderPrice, shippingFee });
   };
 
   const handleConfirmWarehouse = async (trackingCode: string) => {
@@ -234,6 +240,12 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
                 sx={{ minWidth: 200, fontWeight: "bold" }}
                 align="left"
               >
+                Trạng thái cước phí
+              </TableCell>
+              <TableCell
+                sx={{ minWidth: 200, fontWeight: "bold" }}
+                align="left"
+              >
                 Trạng thái thanh toán
               </TableCell>
               <TableCell
@@ -271,8 +283,9 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
           </TableHead>
           <TableBody>
             {displayedOrders.length > 0 ? (
-              displayedOrders.map((order) => (
+              displayedOrders.map((order, index) => (
                 <OrderRow
+                  index={index}
                   key={order.trackingCode}
                   order={order}
                   userRole={userRole}
@@ -340,7 +353,9 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
 
       {openConfirmDeliveryCode && (
         <ConfirmDeliveryModal
-          trackingCode={openConfirmDeliveryCode}
+          trackingCode={openConfirmDeliveryCode.trackingCode}
+          orderPrice={openConfirmDeliveryCode.orderPrice}
+          shippingFee={openConfirmDeliveryCode.shippingFee}
           onClose={() => setOpenConfirmDeliveryCode(null)}
           fetchOrders={fetchOrders}
         />

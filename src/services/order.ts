@@ -1,6 +1,6 @@
 import { callApi } from "../components/shared/api";
 import { localStorageHelper } from "../components/shared/localStorageHelper";
-import { AssignShipperRequest, AssignWarehouseRequest, CreateOrderRequest, OrderConfirmDeliveryRequest, OrderConfirmPickupRequest, OrderResponse } from "../types/order.type";
+import { AssignShipperRequest, AssignWarehouseRequest, CreateOrderRequest, CreateOrderResponse, OrderConfirmDeliveryRequest, OrderConfirmPickupRequest, OrderResponse, TrackingCodeRequest } from "../types/order.type";
 import {
   SearchWarehouseLocationsRequest,
   SearchWarehouseLocationsResponse,
@@ -35,13 +35,8 @@ export const createOrder = async (request: CreateOrderRequest) => {
     }
   }
 
-  // Nếu có ảnh thì append ảnh
-  // if (request.pickupImage) {
-  //   formData.append("pickupImage", request.pickupImage);
-  // }
-
   try {
-    const response = await callApi<FormData, unknown>(
+    const response = await callApi< CreateOrderResponse, FormData>(
       "POST",
       "orders",
       formData,
@@ -63,8 +58,6 @@ export const createOrder = async (request: CreateOrderRequest) => {
 export const confirmOrderPickup = async (request: OrderConfirmPickupRequest): Promise<void> => {
   const formData = new FormData();
   formData.append("trackingCode", request.trackingCode);
-  formData.append("paymentStatus", request.paymentStatus);
-
 
   if (request.pickupImage) {
     formData.append("pickupImage", request.pickupImage);
@@ -336,3 +329,41 @@ export const assignShipperDelivery = async (
     throw error; // Propagate error for further handling
   }
 };
+
+
+export const createVNPayPayment = async (amount: number, trackingCode: string): Promise<string> => {
+  const response = await callApi<{ data: string }>(
+    "POST",
+    `payment?amount=${amount}&trackingCode=${trackingCode}`,
+    {},
+    true 
+  );
+  return response.data;
+};
+
+export const verifyVnPayReturn = async (queryParams: string): Promise<string> => {
+  return callApi<string>(
+    'GET',
+    `payment/vnpay-return${queryParams}`, 
+    undefined, 
+    true
+  );
+};
+
+export const updateShippingPaymentStatus = async (
+  request: TrackingCodeRequest
+): Promise<TrackingCodeRequest> => {
+  try {
+    const response = await callApi<TrackingCodeRequest>(
+      "POST",
+      "orders/payment-status",
+      request,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error("Error updating payment status:", error);
+    throw error;
+  }
+};
+

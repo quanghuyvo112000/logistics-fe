@@ -1,19 +1,9 @@
 import { Upload } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormHelperText,
-  Typography,
-} from "@mui/material";
+import { Box, Button, FormHelperText, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { confirmOrderPickup } from "../../services/order";
-import {
-  OrderConfirmPickupRequest,
-  PaymentStatus,
-} from "../../types/order.type";
+import { OrderConfirmPickupRequest } from "../../types/order.type";
 import CommonModal from "../shared/CommonModal";
 
 interface ConfirmPickupModalProps {
@@ -28,23 +18,9 @@ const ConfirmPickupModal: React.FC<ConfirmPickupModalProps> = ({
   fetchOrders,
 }) => {
   const [pickupImage, setPickupImage] = useState<File | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>(
-    PaymentStatus.NOTPAID
-  );
-  const [isPrepaid, setIsPrepaid] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const { showMessage } = useSnackbar();
-
-  const getPaymentStatusText = (status: PaymentStatus): string => {
-    return status === PaymentStatus.PAID ? "Đã thanh toán" : "Chưa thanh toán";
-  };
-
-  const handlePrepaidChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = event.target.checked;
-    setIsPrepaid(checked);
-    setPaymentStatus(checked ? PaymentStatus.PAID : PaymentStatus.NOTPAID);
-  };
 
   const handleConfirm = async () => {
     if (!pickupImage) {
@@ -55,7 +31,6 @@ const ConfirmPickupModal: React.FC<ConfirmPickupModalProps> = ({
     setLoading(true);
     const request: OrderConfirmPickupRequest = {
       trackingCode,
-      paymentStatus: paymentStatus,
       pickupImage,
     };
 
@@ -83,72 +58,56 @@ const ConfirmPickupModal: React.FC<ConfirmPickupModalProps> = ({
       confirmColor="success"
       cancelText="Hủy"
     >
-      <Typography>Vui lòng tải ảnh khi lấy hàng cho mã đơn:</Typography>
-      <Typography variant="h6" sx={{ my: 1 }}>
-        {trackingCode}
-      </Typography>
-
-      {/* Checkbox thanh toán trước */}
-      <Box sx={{ mt: 2, mb: 2 }}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={isPrepaid}
-              onChange={handlePrepaidChange}
-              color="primary"
-            />
-          }
-          label="Thanh toán trước"
-        />
-        <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
-          Trạng thái: {getPaymentStatusText(paymentStatus)}
+      <Box sx={{ p: 5, backgroundColor: "#f9fafb" }}>
+        <Typography sx={{fontWeight: "bold"}}>Vui lòng tải ảnh khi lấy hàng cho mã đơn:</Typography>
+        <Typography variant="h6" sx={{ my: 1 }}>
+          {trackingCode}
         </Typography>
-      </Box>
-
-      <Box sx={{ mt: 2 }}>
-        {!pickupImage ? (
-          <Button
-            variant="outlined"
-            component="label"
-            startIcon={<Upload />}
-            sx={{ mb: 1 }}
-          >
-            Tải lên ảnh
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files ? e.target.files[0] : null;
-                setPickupImage(file);
-                setImageError(null);
-              }}
-            />
-          </Button>
-        ) : (
-          <Box sx={{ mt: 2, maxWidth: 300, position: "relative" }}>
-            <img
-              src={URL.createObjectURL(pickupImage)}
-              alt="Ảnh đơn hàng"
-              style={{ width: "100%", borderRadius: 4 }}
-            />
-            <Box
-              sx={{ mt: 1, display: "flex", justifyContent: "space-between" }}
+        <Box sx={{ mt: 2 }}>
+          {!pickupImage ? (
+            <Button
+              variant="outlined"
+              component="label"
+              startIcon={<Upload />}
+              sx={{ mb: 1 }}
             >
-              <Typography variant="caption" color="text.secondary">
-                {pickupImage?.name}
-              </Typography>
-              <Button
-                size="small"
-                color="error"
-                onClick={() => setPickupImage(null)}
-                aria-label="Xóa ảnh"
+              Tải lên ảnh
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files ? e.target.files[0] : null;
+                  setPickupImage(file);
+                  setImageError(null);
+                }}
+              />
+            </Button>
+          ) : (
+            <Box sx={{ mt: 2, maxWidth: 300, position: "relative" }}>
+              <img
+                src={URL.createObjectURL(pickupImage)}
+                alt="Ảnh đơn hàng"
+                style={{ width: "100%", borderRadius: 4 }}
+              />
+              <Box
+                sx={{ mt: 1, display: "flex", justifyContent: "space-between" }}
               >
-                Xóa ảnh
-              </Button>
+                <Typography variant="caption" color="text.secondary">
+                  {pickupImage?.name}
+                </Typography>
+                <Button
+                  size="small"
+                  color="error"
+                  onClick={() => setPickupImage(null)}
+                  aria-label="Xóa ảnh"
+                >
+                  Xóa ảnh
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        )}
+          )}
+        </Box>
       </Box>
 
       {imageError && <FormHelperText error>{imageError}</FormHelperText>}

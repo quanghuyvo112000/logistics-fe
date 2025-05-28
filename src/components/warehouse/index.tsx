@@ -169,8 +169,9 @@ const WarehouseList: React.FC = () => {
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      .map((warehouse) => (
+                      .map((warehouse, index) => (
                         <WarehouseRow
+                          index={index}
                           key={warehouse.id}
                           warehouse={warehouse}
                           fetchWarehouses={fetchWarehouses}
