@@ -2,7 +2,7 @@ import { Backdrop } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { BackWheel, Car, CarContainer, FrontWheel, LoadingContainer, LoadingText, Road, RoadContainer, StyledBackdrop } from "./util";
 
-interface CarLoadingHandlerProps {
+interface LoadingHandlerProps {
   children: (
     showLoading: () => void,
     hideLoading: () => void,
@@ -12,7 +12,7 @@ interface CarLoadingHandlerProps {
   backdropProps?: Partial<React.ComponentProps<typeof Backdrop>>;
 }
 
-const CarLoadingHandler: React.FC<CarLoadingHandlerProps> = ({ 
+const LoadingHandler: React.FC<LoadingHandlerProps> = ({ 
   children, 
   loadingText = "Đang tải...",
   backdropProps = {}
@@ -57,4 +57,4 @@ const CarLoadingHandler: React.FC<CarLoadingHandlerProps> = ({
   );
 };
 
-export default CarLoadingHandler;
+export default LoadingHandler;
