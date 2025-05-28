@@ -57,7 +57,9 @@ const Sidebar = ({ drawerWidth }: Props) => {
     ...(userRole === "WAREHOUSE_MANAGER" || userRole === "ADMIN"
       ? [{ text: "Kho hàng", path: "/warehouses", icon: <Warehouse /> }]
       : []),
-    { text: "Lịch", path: "/calendar", icon: <CalendarMonth /> },
+    ...(userRole === "WAREHOUSE_MANAGER" || userRole === "DRIVER"
+      ? [{ text: "Lịch", path: "/calendar", icon: <CalendarMonth /> }]
+      : []),
     { text: "Đơn hàng", path: "/orders", icon: <Inventory /> },
   ];
 
