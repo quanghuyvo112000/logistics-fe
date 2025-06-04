@@ -14,6 +14,7 @@ import { fetchWorkStatusSchedules } from "../../services/calendar";
 import { assignShipperPickUp } from "../../services/order";
 import { WorkScheduleStatus } from "../../types/calendar.types";
 import CommonModal from "../shared/CommonModal";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface ShipperSelectModalProps {
   trackingCode: string;
@@ -35,6 +36,9 @@ const ShipperSelectModal = ({
   useEffect(() => {
     const fetchShippers = async () => {
       setLoading(true);
+      showLoading("Đang tải danh sách shipper...");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       try {
         const response = await fetchWorkStatusSchedules();
         setShippers(response);
@@ -44,6 +48,7 @@ const ShipperSelectModal = ({
         console.error(err);
       } finally {
         setLoading(false);
+        hideLoading();
       }
     };
 

@@ -8,10 +8,12 @@ import { Warehouse } from "../../types/warehouse.types";
 import WarehouseDetails from "./WarehouseDetails";
 
 const WarehouseRow = ({
+  index,
   warehouse,
   fetchWarehouses,
   isChecked,
 }: {
+  index: number;
   warehouse: Warehouse;
   fetchWarehouses: () => void;
   isChecked: boolean;
@@ -28,7 +30,7 @@ const WarehouseRow = ({
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" }, backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff", }}>
         <TableCell>
           <IconButton
             aria-label="expand row"

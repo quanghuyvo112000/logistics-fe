@@ -1,30 +1,62 @@
-import React, { useState } from "react";
-import { CircularProgress, Backdrop } from "@mui/material";
+/* eslint-disable react-refresh/only-export-components */
+// components/common/LoadingHandler.tsx
+import React from "react";
+import ReactDOM from "react-dom";
+import {
+  BackWheel,
+  Car,
+  CarContainer,
+  FrontWheel,
+  LoadingContainer,
+  LoadingText,
+  Road,
+  RoadContainer,
+  StyledBackdrop
+} from "./util";
+
+let container: HTMLDivElement | null = null;
+
+export const showLoading = (text = "Đang tải...") => {
+  if (container) return; // Đã hiển thị thì bỏ qua
+  container = document.createElement("div");
+  document.body.appendChild(container);
+  ReactDOM.render(<LoadingHandler loadingText={text} />, container);
+};
+
+export const hideLoading = () => {
+  if (container) {
+    ReactDOM.unmountComponentAtNode(container);
+    document.body.removeChild(container);
+    container = null;
+  }
+};
 
 interface LoadingHandlerProps {
-  children: (
-    showLoading: () => void,
-    hideLoading: () => void
-  ) => React.ReactNode;
+  loadingText?: string;
 }
 
-const LoadingHandler: React.FC<LoadingHandlerProps> = ({ children }) => {
-  const [loading, setLoading] = useState(false);
-
-  const showLoading = (): void => setLoading(true);
-  const hideLoading = (): void => setLoading(false);
+const LoadingHandler: React.FC<LoadingHandlerProps> = ({ loadingText = "Đang tải..." }) => {
+  const carLoadingComponent = (
+    <LoadingContainer>
+      <RoadContainer>
+        <Road />
+        <CarContainer>
+          <Car>
+            <FrontWheel />
+            <BackWheel />
+          </Car>
+        </CarContainer>
+      </RoadContainer>
+      <LoadingText variant="h6">
+        {loadingText}
+      </LoadingText>
+    </LoadingContainer>
+  );
 
   return (
-    <>
-      {children(showLoading, hideLoading)}
-      <Backdrop
-        style={{zIndex: 1000}}
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    </>
+    <StyledBackdrop open>
+      {carLoadingComponent}
+    </StyledBackdrop>
   );
 };
 

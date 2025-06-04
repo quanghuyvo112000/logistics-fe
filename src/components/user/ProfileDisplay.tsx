@@ -5,10 +5,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MapIcon from "@mui/icons-material/Map";
+import PasswordIcon from "@mui/icons-material/Password";
 import PersonIcon from "@mui/icons-material/Person";
 import PhoneIcon from "@mui/icons-material/Phone";
 import UpdateIcon from "@mui/icons-material/Update";
-import PasswordIcon from '@mui/icons-material/Password';
 import {
   Avatar,
   Box,
@@ -102,7 +102,7 @@ const ProfileDisplay: React.FC<ProfileDisplayProps> = ({
                   minHeight: "36px",
                   alignSelf: { xs: "center", md: "flex-start" },
                   mt: { xs: 2, md: 0 },
-                  mx: 2
+                  mx: 2,
                 }}
                 onClick={onEditClick}
               >

@@ -1,8 +1,10 @@
-import React from 'react'
+import RevenueChart from '../components/revenue-chart'
 
 function Dashboard() {
   return (
-    <div>Dashboard</div>
+    <>
+      <RevenueChart/>
+    </>
   )
 }
 

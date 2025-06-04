@@ -1,12 +1,13 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Alert, Container } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { UserInfo, UserInfoResponse } from "../../types/user.types";
-import LoadingHandler from "../shared/loadingHandler";
 import ProfileDisplay from "./ProfileDisplay";
 import EditProfileModal from "./EditProfileModal";
 import { getProfile } from "../../services/user";
 import { localStorageHelper } from "../shared/localStorageHelper";
 import ChangePasswordModal from "./ChangePasswordModal";
+import { showLoading, hideLoading } from "../shared/loadingHandler";
 
 const UserProfileContainer: React.FC = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -14,33 +15,33 @@ const UserProfileContainer: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<Partial<UserInfo>>({});
-
   const hasChecked = useRef(false);
 
-  const loadUserProfile = async (
-    showLoading: () => void,
-    hideLoading: () => void
-  ) => {
+  const loadUserProfile = async () => {
     try {
+      showLoading("Đang tải thông tin người dùng...");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (hasChecked.current) return;
       hasChecked.current = true;
-      showLoading();
       const response: UserInfoResponse = await getProfile();
       if (response.status === 200 && response.data) {
         setUserInfo(response.data);
         setFormData(response.data);
       } else {
-        setError(response.message || "Failed to load user profile");
+        setError(response.message || "Không thể tải thông tin người dùng");
       }
     } catch (err) {
       console.error("Error loading profile:", err);
-      setError(
-        err instanceof Error ? err.message : "An unexpected error occurred"
-      );
+      setError(err instanceof Error ? err.message : "Đã xảy ra lỗi bất ngờ");
     } finally {
       hideLoading();
     }
   };
+
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
 
   useEffect(() => {
     const isPasswordStr = localStorageHelper.getItem<string>("isPassword");
@@ -78,49 +79,37 @@ const UserProfileContainer: React.FC = () => {
     }));
   };
 
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 2 }}>
+        {error}
+      </Alert>
+    );
+  }
+
+  if (!userInfo) {
+    return null; // sẽ hiển thị loading overlay
+  }
+
   return (
-    <LoadingHandler>
-      {(showLoading, hideLoading) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useEffect(() => {
-          loadUserProfile(showLoading, hideLoading);
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, []);
-
-        if (error) {
-          return (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          );
-        }
-
-        if (!userInfo) {
-          return null;
-        }
-
-        return (
-          <Container maxWidth="lg">
-            <ProfileDisplay
-              userInfo={userInfo}
-              onEditClick={handleEditProfile}
-              onChangeClick={handleOpenChangeModal}
-            />
-            <EditProfileModal
-              open={isEditModalOpen}
-              onClose={handleCloseModal}
-              formData={formData}
-              onInputChange={handleInputChange}
-              onSuccessUpdate={(updated) => setUserInfo(updated)}
-            />
-            <ChangePasswordModal
-              open={isChangeModalOpen}
-              onClose={handleCloseChangeModal}
-            />
-          </Container>
-        );
-      }}
-    </LoadingHandler>
+    <Container maxWidth="lg">
+      <ProfileDisplay
+        userInfo={userInfo}
+        onEditClick={handleEditProfile}
+        onChangeClick={handleOpenChangeModal}
+      />
+      <EditProfileModal
+        open={isEditModalOpen}
+        onClose={handleCloseModal}
+        formData={formData}
+        onInputChange={handleInputChange}
+        onSuccessUpdate={(updated) => setUserInfo(updated)}
+      />
+      <ChangePasswordModal
+        open={isChangeModalOpen}
+        onClose={handleCloseChangeModal}
+      />
+    </Container>
   );
 };
 

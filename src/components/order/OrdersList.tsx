@@ -14,7 +14,7 @@ import {
   TablePagination,
   TableRow,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
@@ -55,9 +55,11 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
 
   const [openModalTrackingDeliveryCode, setOpenModalTrackingDeliveryCode] =
     useState<string | null>(null);
-  const [openConfirmDeliveryCode, setOpenConfirmDeliveryCode] = useState<
-    string | null
-  >(null);
+  const [openConfirmDeliveryCode, setOpenConfirmDeliveryCode] = useState<{
+    trackingCode: string;
+    orderPrice: number;
+    shippingFee: number;
+  } | null>(null);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { showMessage } = useSnackbar();
 
@@ -123,8 +125,12 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
     setOpenConfirmPickupCode(trackingCode);
   };
 
-  const handleConfirmDelivery = (trackingCode: string) => {
-    setOpenConfirmDeliveryCode(trackingCode);
+  const handleConfirmDelivery = (
+    trackingCode: string,
+    orderPrice: number,
+    shippingFee: number
+  ) => {
+    setOpenConfirmDeliveryCode({ trackingCode, orderPrice, shippingFee });
   };
 
   const handleConfirmWarehouse = async (trackingCode: string) => {
@@ -203,33 +209,83 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
         <Table sx={{ minWidth: 1200 }} aria-label="orders table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ minWidth: 300 }}>Mã đơn hàng</TableCell>
-              <TableCell sx={{ minWidth: 300 }}>Thông tin người gửi</TableCell>
-              <TableCell sx={{ minWidth: 300 }}>Thông tin người nhận</TableCell>
-              <TableCell sx={{ minWidth: 150 }} align="right">
+              <TableCell sx={{ minWidth: 300, fontWeight: "bold" }}>
+                Mã đơn hàng
+              </TableCell>
+              <TableCell sx={{ minWidth: 300, fontWeight: "bold" }}>
+                Thông tin người gửi
+              </TableCell>
+              <TableCell sx={{ minWidth: 300, fontWeight: "bold" }}>
+                Thông tin người nhận
+              </TableCell>
+              <TableCell
+                sx={{ minWidth: 150, fontWeight: "bold" }}
+                align="right"
+              >
                 Cân nặng (kg)
               </TableCell>
-              <TableCell sx={{ minWidth: 150 }} align="right">
-                Giá (VND)
+              <TableCell
+                sx={{ minWidth: 200, fontWeight: "bold" }}
+                align="right"
+              >
+                Giá trị sản phẩm (VND)
               </TableCell>
-              <TableCell sx={{ minWidth: 150 }} align="center">
-                Trạng thái
+              <TableCell
+                sx={{ minWidth: 200, fontWeight: "bold" }}
+                align="right"
+              >
+                Cước vận chuyển (VND)
               </TableCell>
-              <TableCell sx={{ minWidth: 150 }}>Ngày giao dự kiến</TableCell>
-              <TableCell sx={{ minWidth: 150 }}>Ngày tạo</TableCell>
-              <TableCell sx={{ minWidth: 150 }}>Cập nhật</TableCell>
-              <TableCell sx={{ minWidth: 150 }}>Ảnh nhận hàng</TableCell>
-              <TableCell sx={{ minWidth: 150 }}>Ảnh giao hàng</TableCell>
+              <TableCell
+                sx={{ minWidth: 200, fontWeight: "bold" }}
+                align="left"
+              >
+                Trạng thái cước phí
+              </TableCell>
+              <TableCell
+                sx={{ minWidth: 200, fontWeight: "bold" }}
+                align="left"
+              >
+                Trạng thái thanh toán
+              </TableCell>
+              <TableCell
+                sx={{ minWidth: 200, fontWeight: "bold" }}
+                align="left"
+              >
+                Trạng thái đơn hàng
+              </TableCell>
+              <TableCell sx={{ minWidth: 200, fontWeight: "bold" }}>
+                Ngày giao dự kiến
+              </TableCell>
+              <TableCell sx={{ minWidth: 160, fontWeight: "bold" }}>
+                Ngày tạo
+              </TableCell>
+              <TableCell sx={{ minWidth: 160, fontWeight: "bold" }}>
+                Cập nhật
+              </TableCell>
+              <TableCell sx={{ minWidth: 150, fontWeight: "bold" }}>
+                Ảnh nhận hàng
+              </TableCell>
+              <TableCell sx={{ minWidth: 150, fontWeight: "bold" }}>
+                Ảnh giao hàng
+              </TableCell>
               {orders.some(
                 (order) => order.isSourceWarehouse !== undefined
-              ) && <TableCell sx={{ minWidth: 300 }}>Thông tin thêm</TableCell>}
-              <TableCell sx={{ minWidth: 200 }}>Chức năng</TableCell>
+              ) && (
+                <TableCell sx={{ minWidth: 300, fontWeight: "bold" }}>
+                  Thông tin thêm
+                </TableCell>
+              )}
+              <TableCell sx={{ minWidth: 200, fontWeight: "bold" }}>
+                Chức năng
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {displayedOrders.length > 0 ? (
-              displayedOrders.map((order) => (
+              displayedOrders.map((order, index) => (
                 <OrderRow
+                  index={index}
                   key={order.trackingCode}
                   order={order}
                   userRole={userRole}
@@ -297,7 +353,9 @@ const OrdersList = ({ onRefreshRef }: OrdersListProps) => {
 
       {openConfirmDeliveryCode && (
         <ConfirmDeliveryModal
-          trackingCode={openConfirmDeliveryCode}
+          trackingCode={openConfirmDeliveryCode.trackingCode}
+          orderPrice={openConfirmDeliveryCode.orderPrice}
+          shippingFee={openConfirmDeliveryCode.shippingFee}
           onClose={() => setOpenConfirmDeliveryCode(null)}
           fetchOrders={fetchOrders}
         />

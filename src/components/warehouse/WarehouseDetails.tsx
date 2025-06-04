@@ -24,6 +24,7 @@ import AddManagerModal from "./AddManagerModal";
 import { localStorageHelper } from "../shared/localStorageHelper";
 import { decryptData } from "../../utils/crypto";
 import AddDriverModal from "./AddDriverModal";
+import { convertVehicleType } from "../../utils/moneyFormat";
 
 const WarehouseDetails = ({
   warehouse,
@@ -257,7 +258,7 @@ const WarehouseDetails = ({
                         </TableCell>
                         <TableCell>
                           <Typography variant="body2">
-                            {driver?.vehicleType ?? "N/A"}
+                            {convertVehicleType(driver?.vehicleType ?? "N/A")}
                           </Typography>
                           <Typography variant="body2" color="textSecondary">
                             Số xe: {driver?.vehiclePlate ?? "N/A"}

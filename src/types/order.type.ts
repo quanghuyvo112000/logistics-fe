@@ -55,7 +55,21 @@ export interface CreateOrderRequest {
   orderPrice: number
   shippingFee: number
   expectedDeliveryTime: string
+}
 
+export interface OrderResponse {
+  trackingCode: string
+}
+
+export interface TrackingCodeRequest {
+  trackingCode: string
+}
+
+
+export interface CreateOrderResponse {
+  status: number
+  message: string
+  data: OrderResponse
 }
 
 export interface OrderResponse {
@@ -86,6 +100,8 @@ export interface Order {
   isDeliveryDriverNull?: boolean;
   warehouseManagerRole?: string;
   expectedDeliveryTime: string;
+  paymentStatus: string;
+  shippingPaymentStatus: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -98,8 +114,12 @@ export interface AssignShipperRequest {
 export interface AssignWarehouseRequest {
   trackingCode: string;
 }
-
 export interface OrderConfirmPickupRequest {
+  trackingCode: string;
+  pickupImage: File | null
+}
+
+export interface OrderConfirmDeliveryRequest {
   trackingCode: string;
   pickupImage: File | null
 }

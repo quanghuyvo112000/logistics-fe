@@ -1,73 +1,108 @@
 import { Upload } from "@mui/icons-material"; // Icon upload
-import {
-    Box,
-    Button,
-    FormHelperText,
-    Typography,
-} from "@mui/material";
+import { Box, Button, FormHelperText, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
+import { createIncomeByTrackingCode } from "../../services/income";
 import { confirmOrderPickupDelivery } from "../../services/order";
-import { OrderConfirmPickupRequest } from "../../types/order.type";
+import { OrderConfirmDeliveryRequest } from "../../types/order.type";
 import CommonModal from "../shared/CommonModal";
-  
-  interface ConfirmPickupModalProps {
-    trackingCode: string;
-    onClose: () => void;
-    fetchOrders: () => void;
-  }
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
-  const ConfirmDeliveryModal: React.FC<ConfirmPickupModalProps> = ({
-    trackingCode,
-    onClose,
-    fetchOrders,
-  }) => {
-    const [pickupImage, setPickupImage] = useState<File | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [imageError, setImageError] = useState<string | null>(null);
-    const { showMessage } = useSnackbar();
-  
-    const handleConfirm = async () => {
-      if (!pickupImage) {
-        setImageError("Vui lòng tải lên ảnh khi lấy hàng");
-        return false; // không đóng modal nếu chưa có ảnh
-      }
-  
-      setLoading(true);
-      const request: OrderConfirmPickupRequest = {
-        trackingCode,
-        pickupImage,
-      };
-  
-      try {
-        await confirmOrderPickupDelivery(request);
-        fetchOrders();
-        showMessage("Giao hàng thành công!", "success");
-        onClose(); // Đóng modal sau khi thành công
-        return true;
-      } catch (error) {
-        console.error("Error confirming pickup:", error);
-        return false; // không đóng modal nếu lỗi
-      } finally {
-        setLoading(false);
-      }
+interface ConfirmPickupModalProps {
+  trackingCode: string;
+  orderPrice: number;
+  shippingFee: number;
+  onClose: () => void;
+  fetchOrders: () => void;
+}
+
+const ConfirmDeliveryModal: React.FC<ConfirmPickupModalProps> = ({
+  trackingCode,
+  orderPrice,
+  shippingFee,
+  onClose,
+  fetchOrders,
+}) => {
+  const [pickupImage, setPickupImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const { showMessage } = useSnackbar();
+
+  const totalAmount: number = orderPrice + shippingFee;
+
+  const handleConfirm = async () => {
+    if (!pickupImage) {
+      setImageError("Vui lòng tải lên ảnh khi lấy hàng");
+      return false; // không đóng modal nếu chưa có ảnh
+    }
+
+    setLoading(true);
+    showLoading("Đang xác nhận giao hàng...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    const request: OrderConfirmDeliveryRequest = {
+      trackingCode,
+      pickupImage,
     };
-  
-    return (
-      <CommonModal
-        open
-        onClose={onClose}
-        title="Xác nhận giao hàng"
-        onConfirm={handleConfirm}
-        confirmText={loading ? "Đang xử lý..." : "Xác nhận"}
-        confirmColor="success"
-        cancelText="Hủy"
+
+    try {
+      // update lương shipper
+      await createIncomeByTrackingCode(trackingCode);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      await confirmOrderPickupDelivery(request);
+
+      fetchOrders();
+
+      showMessage("Giao hàng thành công!", "success");
+      onClose(); // Đóng modal sau khi thành công
+      return true;
+    } catch (error) {
+      console.error("Error confirming pickup:", error);
+      return false; // không đóng modal nếu lỗi
+    } finally {
+      setLoading(false);
+      hideLoading();
+    }
+  };
+
+  return (
+    <CommonModal
+      open
+      onClose={onClose}
+      title="Xác nhận giao hàng"
+      onConfirm={handleConfirm}
+      confirmText={loading ? "Đang xử lý..." : "Xác nhận"}
+      confirmColor="success"
+      cancelText="Hủy"
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          my: 1,
+          fontWeight: "bold",
+          backgroundColor: "#ffe6e6",
+          p: 5,
+          mb: 5,
+          textAlign: "center",
+        }}
       >
-        <Typography>Vui lòng tải ảnh khi giao hàng cho mã đơn:</Typography>
+        Tổng tiền cần thu:{" "}
+        <Box component="span" sx={{ color: "red" }}>
+          {totalAmount.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </Box>
+      </Typography>
+      <Box sx={{ p: 5, backgroundColor: "#f9fafb" }}>
+        <Typography sx={{ fontWeight: "bold" }}>
+          Vui lòng tải ảnh khi giao hàng cho mã đơn:
+        </Typography>
         <Typography variant="h6" sx={{ my: 1 }}>
           {trackingCode}
         </Typography>
-  
         <Box sx={{ mt: 2 }}>
           {!pickupImage ? (
             <Button
@@ -95,7 +130,9 @@ import CommonModal from "../shared/CommonModal";
                 alt="Ảnh đơn hàng"
                 style={{ width: "100%", borderRadius: 4 }}
               />
-              <Box sx={{ mt: 1, display: "flex", justifyContent: "space-between" }}>
+              <Box
+                sx={{ mt: 1, display: "flex", justifyContent: "space-between" }}
+              >
                 <Typography variant="caption" color="text.secondary">
                   {pickupImage?.name}
                 </Typography>
@@ -111,11 +148,11 @@ import CommonModal from "../shared/CommonModal";
             </Box>
           )}
         </Box>
-  
-        {imageError && <FormHelperText error>{imageError}</FormHelperText>}
-      </CommonModal>
-    );
-  };
-  
-  export default ConfirmDeliveryModal;
-  
+      </Box>
+
+      {imageError && <FormHelperText error>{imageError}</FormHelperText>}
+    </CommonModal>
+  );
+};
+
+export default ConfirmDeliveryModal;

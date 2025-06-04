@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/OrderRow.tsx
-import React from "react";
+import { Menu } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -11,9 +11,11 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Menu } from "@mui/icons-material";
+import React from "react";
+import { getPaymentStatusLabel, getPaymentStatusColor } from "./util";
 
 interface OrderRowProps {
+  index: number;
   order: any;
   userRole: string | null;
   openDropdown: string | null;
@@ -24,12 +26,13 @@ interface OrderRowProps {
   handleConfirmWarehouse: (code: string) => void;
   handleConfirmLeaveWarehouse: (code: string) => void;
   handleConfirmPickup: (code: string) => void;
-  handleConfirmDelivery: (code: string) => void;
+  handleConfirmDelivery: (code: string, orderPrice: number, shippingFee: number) => void;
   handleConfirmDeliveryWarehouse: (code: string) => void;
   handlePickUpShipperDeliveryClick: (code: string) => void;
 }
 
 const OrderRow: React.FC<OrderRowProps> = ({
+  index,
   order,
   userRole,
   openDropdown,
@@ -45,7 +48,13 @@ const OrderRow: React.FC<OrderRowProps> = ({
   handlePickUpShipperDeliveryClick,
 }) => {
   return (
-    <TableRow key={order.trackingCode} hover>
+    <TableRow
+      sx={{
+        backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
+      }}
+      key={order.trackingCode}
+      hover
+    >
       <TableCell component="th" scope="row">
         {order.trackingCode}
       </TableCell>
@@ -63,11 +72,26 @@ const OrderRow: React.FC<OrderRowProps> = ({
       </TableCell>
       <TableCell align="right">{order.weight} kg</TableCell>
       <TableCell align="right">
-        {new Intl.NumberFormat("vi-VN").format(
-          order.orderPrice + order.shippingFee
-        )}
+        {new Intl.NumberFormat("vi-VN").format(order.orderPrice)}
       </TableCell>
-      <TableCell align="center">
+      <TableCell align="right">
+        {new Intl.NumberFormat("vi-VN").format(order.shippingFee)}
+      </TableCell>
+      <TableCell align="left">
+        <Chip
+          label={getPaymentStatusLabel(order.shippingPaymentStatus)}
+          color={getPaymentStatusColor(order.shippingPaymentStatus)}
+          size="small"
+        />
+      </TableCell>
+      <TableCell align="left">
+        <Chip
+          label={getPaymentStatusLabel(order.paymentStatus)}
+          color={getPaymentStatusColor(order.paymentStatus)}
+          size="small"
+        />
+      </TableCell>
+      <TableCell align="left">
         <Chip
           label={getStatusLabel(order.status)}
           color={getStatusColor(order.status)}
@@ -219,7 +243,7 @@ const OrderRow: React.FC<OrderRowProps> = ({
                       order.isDeliveryDriverNull !== false ||
                       order.deliveryImage != null
                     }
-                    onClick={() => handleConfirmDelivery(order.trackingCode)}
+                    onClick={() => handleConfirmDelivery(order.trackingCode, order.orderPrice, order.shippingFee)}
                   >
                     Giao hàng
                   </Button>

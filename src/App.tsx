@@ -8,16 +8,23 @@ import { SnackbarProvider } from "./contexts/SnackbarContext";
 import Authentication from "./pages/Authentication";
 import Calendar from "./pages/Calendar";
 import Dashboard from "./pages/Dashboard";
+import History from "./pages/History";
 import Orders from "./pages/Orders";
+import Payment from "./pages/Payment";
 import Profile from "./pages/Profile";
 import Warehouses from "./pages/Warehouses";
-import History from "./pages/History";
+import ListShipper from "./pages/ListShipper";
+import ListVehicleTable from "./pages/ListVehicleTable";
 
 const drawerWidth = 240;
 
 function AppLayout() {
   const location = useLocation();
-  const isNoLayoutRoute = ["/", "/authentication"].includes(location.pathname);
+  const isNoLayoutRoute = [
+    "/",
+    "/authentication",
+    "/payment/vnpay-return",
+  ].includes(location.pathname);
 
   return (
     <>
@@ -29,15 +36,18 @@ function AppLayout() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/warehouses" element={<Warehouses />} />
-            <Route path="/Calendar" element={<Calendar />} />
+            <Route path="/calendar" element={<Calendar />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/drivers" element={<ListShipper />} />
+            <Route path="/vehicle" element={<ListVehicleTable />} />
           </Routes>
         </MainContent>
       ) : (
         <Routes>
           <Route path="/" element={<History />} />
           <Route path="/authentication" element={<Authentication />} />
+          <Route path="/payment/vnpay-return" element={<Payment />} />
         </Routes>
       )}
       {!isNoLayoutRoute && <Footer drawerWidth={drawerWidth} />}

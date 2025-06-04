@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { lookUpShippingInfo } from "../../services/warehouse";
 import { LookUpShippingInfoRequest } from "../../types/warehouse.types";
 import LocationSelector from "../shared/LocationSelector";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface ShippingFeeResult {
   fee: number;
@@ -52,6 +53,9 @@ const ShippingFeeCalculator: React.FC = () => {
     }
 
     setLoading(true);
+    showLoading("Đang tính cước vận chuyển...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     setError("");
     setResult(null);
 
@@ -94,6 +98,7 @@ const ShippingFeeCalculator: React.FC = () => {
       console.error(err);
     } finally {
       setLoading(false);
+      hideLoading();
     }
   };
 

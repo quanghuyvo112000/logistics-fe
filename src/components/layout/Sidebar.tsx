@@ -6,6 +6,7 @@ import {
   Inventory,
   Logout,
   Person,
+  TwoWheeler,
   Settings,
   Warehouse,
 } from "@mui/icons-material";
@@ -22,6 +23,7 @@ import { useCallback, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../../services/authen";
 import authHelper from "../../utils/auth-helper";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface Props {
   drawerWidth: number;
@@ -43,11 +45,15 @@ const Sidebar = ({ drawerWidth }: Props) => {
 
   const handleLogout = useCallback(async () => {
     try {
+      showLoading("Đang đăng xuất...");
+      await new Promise((resolve) => setTimeout(resolve, 900));
+
       const response = await logout();
       console.log("🚪 Logout:", response.message);
     } catch (error) {
       console.error("❌ Logout failed:", error);
     } finally {
+      hideLoading();
       navigate("/authentication");
     }
   }, [navigate]);
@@ -55,9 +61,17 @@ const Sidebar = ({ drawerWidth }: Props) => {
   const menuItems = [
     { text: "Dashboard", path: "/dashboard", icon: <Dashboard /> },
     ...(userRole === "WAREHOUSE_MANAGER" || userRole === "ADMIN"
-      ? [{ text: "Kho hàng", path: "/warehouses", icon: <Warehouse /> }]
+      ? [
+          { text: "Kho hàng", path: "/warehouses", icon: <Warehouse /> },
+          { text: "Tài xế", path: "/drivers", icon: <Person /> },
+        ]
       : []),
-    { text: "Lịch", path: "/calendar", icon: <CalendarMonth /> },
+    ...(userRole === "WAREHOUSE_MANAGER"
+      ? [{ text: "Phương tiện", path: "/vehicle", icon: <TwoWheeler /> }]
+      : []),
+    ...(userRole === "WAREHOUSE_MANAGER" || userRole === "DRIVER"
+      ? [{ text: "Lịch", path: "/calendar", icon: <CalendarMonth /> }]
+      : []),
     { text: "Đơn hàng", path: "/orders", icon: <Inventory /> },
   ];
 
