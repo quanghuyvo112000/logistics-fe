@@ -1,8 +1,6 @@
-"use client"
+import type React from "react";
 
-import type React from "react"
-
-import { Grid, Paper, styled } from "@mui/material"
+import { Grid, Paper, styled } from "@mui/material";
 import {
   addMonths,
   eachDayOfInterval,
@@ -13,19 +11,29 @@ import {
   parseISO,
   startOfMonth,
   subMonths,
-} from "date-fns"
-import { useEffect, useState } from "react"
-import { createWorkSchedule, fetchMyWorkSchedules, fetchWorkSchedules, updateWorkScheduleStatus } from "../../services/calendar"
-import { CreateWorkScheduleRequest, UpdateWorkScheduleStatusRequest, UserRole, WorkingSchedule } from "../../types/calendar.types"
-import { CalendarHeader } from "./CalendarHeader"
-import { CalendarLegend } from "./CalendarLegend"
-import { DayCell } from "./DayCell"
-import { DriverPopover } from "./DriverPopover"
-import { RegistrationDialog } from "./RegistrationDialog"
-import { RoleIndicator } from "./RoleIndicator"
-import { StatusUpdateDialog } from "./StatusUpdateDialog"
-import { WeekDaysHeader } from "./WeekDaysHeader"
-
+} from "date-fns";
+import { useEffect, useState } from "react";
+import {
+  createWorkSchedule,
+  fetchMyWorkSchedules,
+  fetchWorkSchedules,
+  updateWorkScheduleStatus,
+} from "../../services/calendar";
+import {
+  CreateWorkScheduleRequest,
+  UpdateWorkScheduleStatusRequest,
+  UserRole,
+  WorkingSchedule,
+} from "../../types/calendar.types";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
+import { CalendarHeader } from "./CalendarHeader";
+import { CalendarLegend } from "./CalendarLegend";
+import { DayCell } from "./DayCell";
+import { DriverPopover } from "./DriverPopover";
+import { RegistrationDialog } from "./RegistrationDialog";
+import { RoleIndicator } from "./RoleIndicator";
+import { StatusUpdateDialog } from "./StatusUpdateDialog";
+import { WeekDaysHeader } from "./WeekDaysHeader";
 
 // Styled components
 const CalendarContainer = styled(Paper)(({ theme }) => ({
@@ -45,232 +53,260 @@ const CalendarContainer = styled(Paper)(({ theme }) => ({
     top: 0,
     width: "20px",
     height: "100%",
-    background: "linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 100%)",
+    background:
+      "linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 100%)",
     zIndex: 1,
     pointerEvents: "none",
   },
-}))
+}));
 
 interface DriverCalendarProps {
-  userRole: UserRole
-  initialSchedules?: WorkingSchedule[]
-  onScheduleChange?: (schedules: WorkingSchedule[]) => void
+  userRole: UserRole;
+  initialSchedules?: WorkingSchedule[];
+  onScheduleChange?: (schedules: WorkingSchedule[]) => void;
 }
 
-const DriverCalendar = ({ userRole, initialSchedules, onScheduleChange }: DriverCalendarProps) => {
+const DriverCalendar = ({
+  userRole,
+  initialSchedules,
+  onScheduleChange,
+}: DriverCalendarProps) => {
   // State
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const [selectedDaySchedules, setSelectedDaySchedules] = useState<WorkingSchedule[]>([])
-  const [registrationDialogOpen, setRegistrationDialogOpen] = useState<boolean>(false)
-  const [statusUpdateDialogOpen, setStatusUpdateDialogOpen] = useState<boolean>(false)
-  const [registrationDate, setRegistrationDate] = useState<Date | null>(null)
-  const [selectedSchedule, setSelectedSchedule] = useState<WorkingSchedule | null>(null)
-  const [schedules, setSchedules] = useState<WorkingSchedule[]>(initialSchedules || [])
-  const [loading, setLoading] = useState<boolean>(false)
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [selectedDaySchedules, setSelectedDaySchedules] = useState<
+    WorkingSchedule[]
+  >([]);
+  const [registrationDialogOpen, setRegistrationDialogOpen] =
+    useState<boolean>(false);
+  const [statusUpdateDialogOpen, setStatusUpdateDialogOpen] =
+    useState<boolean>(false);
+  const [registrationDate, setRegistrationDate] = useState<Date | null>(null);
+  const [selectedSchedule, setSelectedSchedule] =
+    useState<WorkingSchedule | null>(null);
+  const [schedules, setSchedules] = useState<WorkingSchedule[]>(
+    initialSchedules || []
+  );
+  const [loading, setLoading] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch schedules on component mount
   useEffect(() => {
     if (!initialSchedules) {
-      fetchSchedules()
+      fetchSchedules();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialSchedules])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialSchedules]);
 
   // Update schedules when initialSchedules changes
   useEffect(() => {
     if (initialSchedules) {
-      setSchedules(initialSchedules)
+      setSchedules(initialSchedules);
     }
-  }, [initialSchedules])
+  }, [initialSchedules]);
 
   // Fetch schedules from API
   const fetchSchedules = async () => {
-    setLoading(true)
-    setError(null)
-    
+    showLoading();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setError(null);
+
     try {
-      let data: WorkingSchedule[]
+      let data: WorkingSchedule[];
 
       // Use different API endpoint based on user role
       if (userRole === "DRIVER") {
-        data = (await fetchMyWorkSchedules()).map(schedule => ({
+        data = (await fetchMyWorkSchedules()).map((schedule) => ({
           ...schedule,
           nameDriver: schedule.nameDriver || "Unknown Driver",
-        }))
-        console.log("Driver schedules:", data) // Debug log
+        }));
+        console.log("Driver schedules:", data); // Debug log
       } else {
-        data = (await fetchWorkSchedules()).map(schedule => ({
+        data = (await fetchWorkSchedules()).map((schedule) => ({
           ...schedule,
           nameDriver: schedule.nameDriver || "Unknown Driver",
-        }))
+        }));
       }
 
-      setSchedules(data)
+      setSchedules(data);
       if (onScheduleChange) {
-        onScheduleChange(data)
+        onScheduleChange(data);
       }
     } catch (err) {
-      setError("Failed to fetch schedules")
-      console.error(err)
+      setError("Failed to fetch schedules");
+      console.error(err);
     } finally {
-      setLoading(false)
+      hideLoading();
     }
-  }
+  };
 
   // Danh sách các ngày trong tuần
-  const weekDays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
+  const weekDays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 
   // Ngày trong tháng hiện tại
   const daysInMonth = eachDayOfInterval({
     start: startOfMonth(currentMonth),
     end: endOfMonth(currentMonth),
-  })
+  });
 
   // Ngày đầu tiên trong tháng (0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7)
-  const startDay = startOfMonth(currentMonth).getDay()
+  const startDay = startOfMonth(currentMonth).getDay();
 
   // Hàm xử lý tháng tiếp theo
   const handleNextMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, 1))
-  }
+    setCurrentMonth(addMonths(currentMonth, 1));
+  };
 
   // Hàm xử lý tháng trước
   const handlePrevMonth = () => {
-    setCurrentMonth(subMonths(currentMonth, 1))
-  }
+    setCurrentMonth(subMonths(currentMonth, 1));
+  };
 
   // Hàm xử lý quay về tháng hiện tại
   const handleToday = () => {
-    setCurrentMonth(new Date())
-  }
+    setCurrentMonth(new Date());
+  };
 
   // Hàm xử lý khi click vào một ngày
   const handleDateClick = (day: Date, event: React.MouseEvent<HTMLElement>) => {
     // Kiểm tra xem ngày có phải là ngày trong quá khứ không
-    const isPastDay = isBefore(day, new Date()) && !isToday(day)
+    const isPastDay = isBefore(day, new Date()) && !isToday(day);
 
     // Không cho phép chọn ngày trong quá khứ
-    if (isPastDay) return
+    if (isPastDay) return;
 
-    setSelectedDate(day)
+    setSelectedDate(day);
 
     if (userRole === "DRIVER") {
       // Check if the day already has a schedule
       const daySchedules = schedules.filter((schedule) => {
         try {
-          return isSameDay(parseISO(schedule.workDate), day)
+          return isSameDay(parseISO(schedule.workDate), day);
         } catch (error) {
-          console.error("Error parsing date:", schedule.workDate, error)
-          return false
+          console.error("Error parsing date:", schedule.workDate, error);
+          return false;
         }
-      })
+      });
 
       // If there are already schedules for this day, show them in a popover
       if (daySchedules.length > 0) {
-        setSelectedDaySchedules(daySchedules)
-        setAnchorEl(event.currentTarget)
+        setSelectedDaySchedules(daySchedules);
+        setAnchorEl(event.currentTarget);
       } else {
         // Otherwise, open the registration dialog
-        setRegistrationDate(day)
-        setRegistrationDialogOpen(true)
+        setRegistrationDate(day);
+        setRegistrationDialogOpen(true);
       }
     } else {
       // Hiển thị popover cho admin/manager
       const daySchedules = schedules.filter((schedule) => {
         try {
-          return isSameDay(parseISO(schedule.workDate), day)
+          return isSameDay(parseISO(schedule.workDate), day);
         } catch (error) {
-          console.error("Error parsing date:", schedule.workDate, error)
-          return false
+          console.error("Error parsing date:", schedule.workDate, error);
+          return false;
         }
-      })
+      });
 
-      setSelectedDaySchedules(daySchedules)
+      setSelectedDaySchedules(daySchedules);
 
       if (daySchedules.length > 0) {
-        setAnchorEl(event.currentTarget)
+        setAnchorEl(event.currentTarget);
       }
     }
-  }
+  };
 
   // Hàm đóng popover
   const handleClosePopover = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   // Hàm xử lý đăng ký lịch làm việc cho driver
-  const handleRegisterWork = async (scheduleData: CreateWorkScheduleRequest) => {
+  const handleRegisterWork = async (
+    scheduleData: CreateWorkScheduleRequest
+  ) => {
     try {
-      setLoading(true)
-      const newSchedule = await createWorkSchedule(scheduleData)
+      setLoading(true);
+      showLoading();
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const updatedSchedules = [...schedules, newSchedule]
-      setSchedules(updatedSchedules)
+      const newSchedule = await createWorkSchedule(scheduleData);
+
+      const updatedSchedules = [...schedules, newSchedule];
+      setSchedules(updatedSchedules);
 
       if (onScheduleChange) {
-        onScheduleChange(updatedSchedules)
+        onScheduleChange(updatedSchedules);
       }
 
-      setRegistrationDialogOpen(false)
-      setRegistrationDate(null)
+      setRegistrationDialogOpen(false);
+      setRegistrationDate(null);
     } catch (err) {
-      console.error("Failed to register work schedule:", err)
-      setError("Failed to register work schedule")
+      console.error("Failed to register work schedule:", err);
+      setError("Failed to register work schedule");
     } finally {
-      setLoading(false)
+      setLoading(false);
+      hideLoading();
     }
-  }
+  };
 
   // Hàm xử lý hủy đăng ký lịch làm việc
 
   // Hàm mở dialog cập nhật trạng thái
   const handleOpenStatusUpdate = (schedule: WorkingSchedule) => {
-    setSelectedSchedule(schedule)
-    setStatusUpdateDialogOpen(true)
-    handleClosePopover() // Close the popover
-  }
+    setSelectedSchedule(schedule);
+    setStatusUpdateDialogOpen(true);
+    handleClosePopover(); // Close the popover
+  };
 
   // Hàm xử lý cập nhật trạng thái
-  const handleUpdateStatus = async (request: UpdateWorkScheduleStatusRequest) => {
+  const handleUpdateStatus = async (
+    request: UpdateWorkScheduleStatusRequest
+  ) => {
     try {
-      setLoading(true)
-      const updatedSchedule = await updateWorkScheduleStatus(request)
+      setLoading(true);
+      showLoading();
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const updatedSchedule = await updateWorkScheduleStatus(request);
 
       // Update the schedule in the state
       const updatedSchedules = schedules.map((schedule) =>
-        schedule.id === updatedSchedule.id ? updatedSchedule : schedule,
-      )
-      setSchedules(updatedSchedules)
+        schedule.id === updatedSchedule.id ? updatedSchedule : schedule
+      );
+      setSchedules(updatedSchedules);
 
       if (onScheduleChange) {
-        onScheduleChange(updatedSchedules)
+        onScheduleChange(updatedSchedules);
       }
 
-      setStatusUpdateDialogOpen(false)
-      setSelectedSchedule(null)
+      setStatusUpdateDialogOpen(false);
+      setSelectedSchedule(null);
     } catch (err) {
-      console.error("Failed to update work schedule status:", err)
-      setError("Failed to update work schedule status")
+      console.error("Failed to update work schedule status:", err);
+      setError("Failed to update work schedule status");
     } finally {
-      setLoading(false)
+      setLoading(false);
+      hideLoading();
     }
-  }
+  };
 
   // Render các ngày trong tháng
   const renderDays = () => {
-    const totalSlots = Math.ceil((daysInMonth.length + startDay) / 7) * 7
-    const daySlots = []
+    const totalSlots = Math.ceil((daysInMonth.length + startDay) / 7) * 7;
+    const daySlots = [];
 
     for (let i = 0; i < totalSlots; i++) {
-      const dayIndex = i - startDay
+      const dayIndex = i - startDay;
       const dayDate =
         dayIndex >= 0 && dayIndex < daysInMonth.length
           ? daysInMonth[dayIndex]
-          : new Date(currentMonth.getFullYear(), currentMonth.getMonth(), dayIndex + 1)
+          : new Date(
+              currentMonth.getFullYear(),
+              currentMonth.getMonth(),
+              dayIndex + 1
+            );
 
       daySlots.push(
         <Grid size={{ xs: 12 / 7 }} key={i}>
@@ -282,12 +318,12 @@ const DriverCalendar = ({ userRole, initialSchedules, onScheduleChange }: Driver
             schedules={schedules}
             onDateClick={handleDateClick}
           />
-        </Grid>,
-      )
+        </Grid>
+      );
     }
 
-    return daySlots
-  }
+    return daySlots;
+  };
 
   return (
     <CalendarContainer>
@@ -346,7 +382,7 @@ const DriverCalendar = ({ userRole, initialSchedules, onScheduleChange }: Driver
         />
       )}
     </CalendarContainer>
-  )
-}
+  );
+};
 
-export default DriverCalendar
+export default DriverCalendar;

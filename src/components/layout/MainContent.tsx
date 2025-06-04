@@ -3,6 +3,7 @@ import { ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { localStorageHelper } from '../shared/localStorageHelper';
 import { introspectToken, logout, refreshToken } from '../../services/authen';
+import { hideLoading, showLoading } from '../shared/loadingHandler';
 
 interface Props {
   drawerWidth: number;
@@ -15,11 +16,15 @@ const MainContent = ({ drawerWidth, children }: Props) => {
 
   const handleLogout = useCallback(async () => {
     try {
+      showLoading("Đang đăng xuất...");
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      
       const response = await logout();
       console.log("🚪 Logout:", response.message);
     } catch (error) {
       console.error("❌ Logout failed:", error);
     } finally {
+      hideLoading();
       navigate("/authentication");
     }
   }, [navigate]);

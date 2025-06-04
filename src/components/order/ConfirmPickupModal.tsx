@@ -2,9 +2,11 @@ import { Upload } from "@mui/icons-material";
 import { Box, Button, FormHelperText, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
+import { createIncomeByTrackingCode } from "../../services/income";
 import { confirmOrderPickup } from "../../services/order";
 import { OrderConfirmPickupRequest } from "../../types/order.type";
 import CommonModal from "../shared/CommonModal";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface ConfirmPickupModalProps {
   trackingCode: string;
@@ -29,6 +31,9 @@ const ConfirmPickupModal: React.FC<ConfirmPickupModalProps> = ({
     }
 
     setLoading(true);
+    showLoading("Đang xác nhận lấy hàng...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const request: OrderConfirmPickupRequest = {
       trackingCode,
       pickupImage,
@@ -36,7 +41,12 @@ const ConfirmPickupModal: React.FC<ConfirmPickupModalProps> = ({
 
     try {
       await confirmOrderPickup(request);
+
       fetchOrders();
+      
+      // update lương shipper
+      await createIncomeByTrackingCode(trackingCode);
+
       showMessage("Lấy hàng thành công!", "success");
       onClose();
       return true;
@@ -45,6 +55,7 @@ const ConfirmPickupModal: React.FC<ConfirmPickupModalProps> = ({
       return false;
     } finally {
       setLoading(false);
+      hideLoading();
     }
   };
 
@@ -59,7 +70,9 @@ const ConfirmPickupModal: React.FC<ConfirmPickupModalProps> = ({
       cancelText="Hủy"
     >
       <Box sx={{ p: 5, backgroundColor: "#f9fafb" }}>
-        <Typography sx={{fontWeight: "bold"}}>Vui lòng tải ảnh khi lấy hàng cho mã đơn:</Typography>
+        <Typography sx={{ fontWeight: "bold" }}>
+          Vui lòng tải ảnh khi lấy hàng cho mã đơn:
+        </Typography>
         <Typography variant="h6" sx={{ my: 1 }}>
           {trackingCode}
         </Typography>

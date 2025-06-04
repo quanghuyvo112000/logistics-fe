@@ -10,7 +10,7 @@ import {
 } from "../../utils/validateForm";
 import CommonModal from "../shared/CommonModal";
 import LocationSelector from "../shared/LocationSelector";
-import LoadingHandler from "../shared/loadingHandler";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface Props {
   open: boolean;
@@ -60,13 +60,12 @@ const AddManagerModal: React.FC<Props> = ({
     }));
   };
 
-  const handleSubmit = async (
-    showLoading: () => void,
-    hideLoading: () => void
-  ) => {
+  const handleSubmit = async () => {
     try {
-      showLoading();
+      showLoading("Đang tạo quản lý kho hàng...");
       setSubmitError(null);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
       if (
         !formData.fullName ||
         !formData.birthday ||
@@ -116,89 +115,88 @@ const AddManagerModal: React.FC<Props> = ({
   };
 
   return (
-    <LoadingHandler>
-      {(showLoading, hideLoading) => (
-        <CommonModal
-          open={open}
-          onClose={onClose}
-          title="Thêm Quản Lý Kho Hàng"
-          confirmText="Lưu thông tin"
-          loading={false}
-          onConfirm={async () => {
-            const success = await handleSubmit(showLoading, hideLoading)
-            if (success) {
-              onClose()
-            }
-            return success
-          }}
-          maxWidth="md"
-        >
-          <Box mt={2}>
-            {submitError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {submitError}
-              </Alert>
-            )}
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  name="fullName"
-                  label="Họ và tên"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  name="birthday"
-                  label="Ngày sinh"
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  value={formData.birthday.toString()}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  name="email"
-                  label="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  name="phone"
-                  label="Số điện thoại"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <Typography variant="h6" align="left"> Địa chỉ thường trú</Typography>
-                <LocationSelector
-                  value={{
-                    province: formData.province,
-                    district: formData.district,
-                    ward: formData.ward,
-                    address: formData.address,
-                  }}
-                  onChange={handleLocationChange}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        </CommonModal>
-      )}
-    </LoadingHandler>
+    <CommonModal
+      open={open}
+      onClose={onClose}
+      title="Thêm Quản Lý Kho Hàng"
+      confirmText="Lưu thông tin"
+      loading={false}
+      onConfirm={async () => {
+        const success = await handleSubmit();
+        if (success) {
+          onClose();
+        }
+        return success;
+      }}
+      maxWidth="md"
+    >
+      <Box mt={2}>
+        {submitError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {submitError}
+          </Alert>
+        )}
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              name="fullName"
+              label="Họ và tên"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              name="birthday"
+              label="Ngày sinh"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={formData.birthday.toString()}
+              onChange={handleChange}
+              required
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              name="email"
+              label="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField
+              fullWidth
+              name="phone"
+              label="Số điện thoại"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+            />
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="h6" align="left">
+              {" "}
+              Địa chỉ thường trú
+            </Typography>
+            <LocationSelector
+              value={{
+                province: formData.province,
+                district: formData.district,
+                ward: formData.ward,
+                address: formData.address,
+              }}
+              onChange={handleLocationChange}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+    </CommonModal>
   );
 };
 

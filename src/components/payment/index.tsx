@@ -1,27 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type React from "react";
-import { useEffect, useState } from "react";
 import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  CircularProgress,
-  Button,
-  Chip,
-  Alert,
-  Container,
-  Stack,
-  Paper,
-} from "@mui/material";
-import {
-  CheckCircle,
   Cancel,
+  CheckCircle,
   Home,
   Receipt,
   Warning,
 } from "@mui/icons-material";
-import { green, red, orange, blue } from "@mui/material/colors";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Container,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { blue, green, orange, red } from "@mui/material/colors";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { createIncomeByTrackingCode } from "../../services/income";
 import { updateShippingPaymentStatus } from "../../services/order";
 
 // Types
@@ -83,35 +84,38 @@ const VNPayReturnHandler: React.FC = () => {
     null
   );
 
+  const hasRunRef = useRef(false);
+
   useEffect(() => {
     const handleVNPayReturn = async (): Promise<void> => {
+      if (hasRunRef.current) return; 
+      hasRunRef.current = true;
+
       try {
         setLoading(true);
 
-        // Get query string from URL
         const queryString: string = window.location.search;
-
         if (!queryString) {
           setError("Không tìm thấy thông tin thanh toán");
           return;
         }
 
-        // Parse URL parameters
         const urlParams = new URLSearchParams(queryString);
         const vnpayParams: VNPayParams = {};
-
         urlParams.forEach((value: string, key: string) => {
           (vnpayParams as any)[key] = value;
         });
 
         setTransactionInfo(vnpayParams);
 
-        // Call API to verify payment
         const response: string = await verifyVnPayReturn(queryString);
         setResult(response);
 
-        // Cập nhật trạng thái thanh toán
         if (vnpayParams.vnp_TxnRef) {
+          await createIncomeByTrackingCode(vnpayParams.vnp_TxnRef);
+
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+
           await updateShippingPaymentStatus({
             trackingCode: vnpayParams.vnp_TxnRef,
           });

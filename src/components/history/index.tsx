@@ -19,6 +19,7 @@ import { TabPanel } from "../shared/TabPanel";
 import OrderHistoryTimeline from "./OrderHistoryTimeline";
 import ShippingFeeCalculator from "./ShippingFeeCalculator";
 import WarehouseLookup from "./WarehouseLookup";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 const HistoryPage: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0); // <-- state quản lý tab
@@ -40,6 +41,8 @@ const HistoryPage: React.FC = () => {
 
     setError("");
     setLoading(true);
+    showLoading("Đang tìm kiếm thông tin đơn hàng...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     try {
       const res = await fetchHistoryOrder({ trackingCode });
@@ -51,6 +54,7 @@ const HistoryPage: React.FC = () => {
       setHistories([]);
     } finally {
       setLoading(false);
+      hideLoading();
     }
   };
 

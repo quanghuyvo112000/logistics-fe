@@ -2,9 +2,11 @@ import { Upload } from "@mui/icons-material"; // Icon upload
 import { Box, Button, FormHelperText, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
+import { createIncomeByTrackingCode } from "../../services/income";
 import { confirmOrderPickupDelivery } from "../../services/order";
 import { OrderConfirmDeliveryRequest } from "../../types/order.type";
 import CommonModal from "../shared/CommonModal";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface ConfirmPickupModalProps {
   trackingCode: string;
@@ -35,14 +37,24 @@ const ConfirmDeliveryModal: React.FC<ConfirmPickupModalProps> = ({
     }
 
     setLoading(true);
+    showLoading("Đang xác nhận giao hàng...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
     const request: OrderConfirmDeliveryRequest = {
       trackingCode,
       pickupImage,
     };
 
     try {
+      // update lương shipper
+      await createIncomeByTrackingCode(trackingCode);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       await confirmOrderPickupDelivery(request);
+
       fetchOrders();
+
       showMessage("Giao hàng thành công!", "success");
       onClose(); // Đóng modal sau khi thành công
       return true;
@@ -51,6 +63,7 @@ const ConfirmDeliveryModal: React.FC<ConfirmPickupModalProps> = ({
       return false; // không đóng modal nếu lỗi
     } finally {
       setLoading(false);
+      hideLoading();
     }
   };
 
@@ -83,9 +96,11 @@ const ConfirmDeliveryModal: React.FC<ConfirmPickupModalProps> = ({
           })}
         </Box>
       </Typography>
-      <Box sx={{ p: 5,  backgroundColor: "#f9fafb",}}>
-        <Typography sx={{fontWeight: "bold"}}>Vui lòng tải ảnh khi giao hàng cho mã đơn:</Typography>
-        <Typography variant="h6" sx={{ my: 1}}>
+      <Box sx={{ p: 5, backgroundColor: "#f9fafb" }}>
+        <Typography sx={{ fontWeight: "bold" }}>
+          Vui lòng tải ảnh khi giao hàng cho mã đơn:
+        </Typography>
+        <Typography variant="h6" sx={{ my: 1 }}>
           {trackingCode}
         </Typography>
         <Box sx={{ mt: 2 }}>

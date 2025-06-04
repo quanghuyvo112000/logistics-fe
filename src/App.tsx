@@ -13,6 +13,8 @@ import Orders from "./pages/Orders";
 import Payment from "./pages/Payment";
 import Profile from "./pages/Profile";
 import Warehouses from "./pages/Warehouses";
+import ListShipper from "./pages/ListShipper";
+import ListVehicleTable from "./pages/ListVehicleTable";
 
 const drawerWidth = 240;
 
@@ -37,6 +39,8 @@ function AppLayout() {
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/drivers" element={<ListShipper />} />
+            <Route path="/vehicle" element={<ListVehicleTable />} />
           </Routes>
         </MainContent>
       ) : (

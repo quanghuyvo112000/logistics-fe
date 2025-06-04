@@ -12,6 +12,7 @@ import { Search, Warehouse } from "lucide-react";
 import React, { useState } from "react";
 import { lookUpWarehouse } from "../../services/warehouse";
 import LocationSelector from "../shared/LocationSelector";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface LookUpWarehouse {
   warehouseName: string;
@@ -35,6 +36,9 @@ const WarehouseLookup: React.FC = () => {
   const handleSearch = async () => {
     if (!location.province) return;
     setLoading(true);
+    showLoading("Đang tải danh sách bưu cục...");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     try {
       const response = await lookUpWarehouse({ province: location.province });
       setWarehouses(response.data || []);
@@ -42,6 +46,7 @@ const WarehouseLookup: React.FC = () => {
       console.error("Failed to fetch warehouse list");
     } finally {
       setLoading(false);
+      hideLoading();
     }
   };
 

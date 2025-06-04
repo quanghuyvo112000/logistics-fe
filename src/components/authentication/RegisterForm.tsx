@@ -23,8 +23,8 @@ import {
   checkValidateEmail,
   checkValidatePhoneNumber,
 } from "../../utils/validateForm";
-import LoadingHandler from "../shared/loadingHandler";
 import LocationSelector from "../shared/LocationSelector";
+import { hideLoading, showLoading } from "../shared/loadingHandler";
 
 interface RegisterFormProps {
   toggleForm: () => void;
@@ -78,10 +78,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
     }));
   };
 
-  const handleRegister = async (
-    showLoading: () => void,
-    hideLoading: () => void
-  ) => {
+  const handleRegister = async () => {
     setError(null);
     setSuccess(null);
 
@@ -122,8 +119,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
       return;
     }
 
-    showLoading();
     try {
+      showLoading("Đang tạo tài khoản...");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
       const res = await createUser(form);
       if (res.status === 201 || res.status === 200 || res.status === 0) {
         setSuccess("Tạo tài khoản thành công!");
@@ -153,211 +152,188 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ toggleForm }) => {
   };
 
   return (
-    <LoadingHandler>
-      {(showLoading, hideLoading) => (
-        <Container maxWidth="sm">
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            sx={{ pt: 1 }}
-          >
-            <Typography
-              component="h1"
-              variant="h4"
-              gutterBottom
-              fontWeight={600}
-            >
-              Đăng ký
-            </Typography>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{ mb: 2, textAlign: "center" }}
-            >
-              Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng ký làm
-              thành viên để trải nghiệm.
-            </Typography>
+    <Container maxWidth="sm">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        sx={{ pt: 1 }}
+      >
+        <Typography component="h1" variant="h4" gutterBottom fontWeight={600}>
+          Đăng ký
+        </Typography>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ mb: 2, textAlign: "center" }}
+        >
+          Chào mừng đến với nền tảng chuỗi cung ứng hậu cần. Đăng ký làm thành
+          viên để trải nghiệm.
+        </Typography>
 
-            <Box
-              component="form"
-              width="100%"
-              noValidate
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleRegister(showLoading, hideLoading);
-              }}
-            >
-              {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {error}
-                </Alert>
-              )}
-              {success && (
-                <Alert severity="success" sx={{ mb: 2 }}>
-                  {success}
-                </Alert>
-              )}
+        <Box
+          component="form"
+          width="100%"
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleRegister();
+          }}
+        >
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              {success}
+            </Alert>
+          )}
 
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Họ và tên"
-                    name="fullName"
-                    value={form.fullName}
-                    onChange={handleChange}
-                    required
-                    InputProps={{ sx: { bgcolor: "#f9fafb" } }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Ngày sinh"
-                    name="birthday"
-                    type="date"
-                    value={form.birthday}
-                    onChange={handleChange}
-                    required
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{ sx: { bgcolor: "#f9fafb" } }}
-                  />
-                </Grid>
-              </Grid>
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Họ và tên"
+                name="fullName"
+                value={form.fullName}
+                onChange={handleChange}
+                required
+                InputProps={{ sx: { bgcolor: "#f9fafb" } }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Ngày sinh"
+                name="birthday"
+                type="date"
+                value={form.birthday}
+                onChange={handleChange}
+                required
+                InputLabelProps={{ shrink: true }}
+                InputProps={{ sx: { bgcolor: "#f9fafb" } }}
+              />
+            </Grid>
+          </Grid>
 
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                    InputProps={{ sx: { bgcolor: "#f9fafb" } }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Số điện thoại"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    required
-                    InputProps={{ sx: { bgcolor: "#f9fafb" } }}
-                  />
-                </Grid>
-              </Grid>
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                InputProps={{ sx: { bgcolor: "#f9fafb" } }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Số điện thoại"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                required
+                InputProps={{ sx: { bgcolor: "#f9fafb" } }}
+              />
+            </Grid>
+          </Grid>
 
-              <LocationSelector
-                onChange={handleLocationChange}
-                value={{
-                  province: form.province,
-                  district: form.district,
-                  ward: form.ward,
-                  address: form.address,
+          <LocationSelector
+            onChange={handleLocationChange}
+            value={{
+              province: form.province,
+              district: form.district,
+              ward: form.ward,
+              address: form.address,
+            }}
+          />
+
+          <Grid container spacing={2} sx={{ mb: 2 }}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Mật khẩu"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={handlePasswordChange}
+                required
+                sx={{ mb: 2, mt: 2 }}
+                InputProps={{
+                  sx: { bgcolor: "#f9fafb" },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 }}
               />
-
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Mật khẩu"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={form.password}
-                    onChange={handlePasswordChange}
-                    required
-                    sx={{ mb: 2, mt: 2 }}
-                    InputProps={{
-                      sx: { bgcolor: "#f9fafb" },
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPassword(!showPassword)}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Xác nhận lại mật khẩu"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    sx={{ mt: 2, position: "relative" }}
-                    InputProps={{
-                      sx: { bgcolor: "#f9fafb" },
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() =>
-                              setShowConfirmPassword(!showConfirmPassword)
-                            }
-                            edge="end"
-                          >
-                            {showConfirmPassword ? (
-                              <VisibilityOff />
-                            ) : (
-                              <Visibility />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              {/* <ul className="pl-2 ml-2 mt-0" style={{ margin: 0 }}>
-                {passwordRequirements.map((req, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      color: passwordValidations[index] ? "green" : "red",
-                      lineHeight: "1.6",
-                      fontSize: "0.875rem",
-                    }}
-                  >
-                    {req.message}
-                  </li>
-                ))}
-              </ul> */}
-              <Button
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
                 fullWidth
-                variant="contained"
-                type="submit"
-                sx={{ mt: 1, mb: 1, borderRadius: 2, py: 1 }}
-              >
-                Tạo tài khoản
-              </Button>
+                label="Xác nhận lại mật khẩu"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                sx={{ mt: 2, position: "relative" }}
+                InputProps={{
+                  sx: { bgcolor: "#f9fafb" },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        edge="end"
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Button
+            fullWidth
+            variant="contained"
+            type="submit"
+            sx={{ mt: 1, mb: 1, borderRadius: 2, py: 1 }}
+          >
+            Tạo tài khoản
+          </Button>
 
-              <Typography variant="body2" align="center">
-                Đã là thành viên?{" "}
-                <Link
-                  component="button"
-                  onClick={toggleForm}
-                  underline="hover"
-                  sx={{ fontWeight: 600 }}
-                >
-                  Đăng nhập
-                </Link>
-              </Typography>
-            </Box>
-          </Box>
-        </Container>
-      )}
-    </LoadingHandler>
+          <Typography variant="body2" align="center">
+            Đã là thành viên?{" "}
+            <Link
+              component="button"
+              onClick={toggleForm}
+              underline="hover"
+              sx={{ fontWeight: 600 }}
+            >
+              Đăng nhập
+            </Link>
+          </Typography>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
