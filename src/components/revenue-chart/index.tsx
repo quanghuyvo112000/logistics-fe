@@ -1,25 +1,27 @@
-import React, { useEffect, useState, useCallback } from "react";
-import FilterControls from "./FilterControls";
-import ErrorDisplay from "./ErrorDisplay";
-import RevenueChartDisplay from "./RevenueChartDisplay";
-import SummaryStats from "./SummaryStats";
-import DataTable from "./DataTable";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  getMonthlyStats,
+  getMonthlyStatsByCustomer,
+  getQuarterlyStats,
+  getQuarterlyStatsByCustomer,
+  getWarehouseRevenueById,
+} from "../../services/income";
+import { getAllWarehouse } from "../../services/warehouse";
 import {
   ChartData,
   StatType,
   TimeAmount,
   WarehouseAmount,
 } from "../../types/income.type";
-import { getAllWarehouse } from "../../services/warehouse";
-import {
-  getMonthlyStats,
-  getQuarterlyStats,
-  getWarehouseRevenueById,
-} from "../../services/income";
-import { getChartTitle } from "./utils";
-import NoDataMessage from "./NoDataMessage";
 import authHelper from "../../utils/auth-helper";
 import { hideLoading, showLoading } from "../shared/loadingHandler";
+import DataTable from "./DataTable";
+import ErrorDisplay from "./ErrorDisplay";
+import FilterControls from "./FilterControls";
+import NoDataMessage from "./NoDataMessage";
+import RevenueChartDisplay from "./RevenueChartDisplay";
+import SummaryStats from "./SummaryStats";
+import { getChartTitle } from "./utils";
 
 interface Warehouse {
   id: string;
@@ -44,7 +46,8 @@ const RevenueChart: React.FC = () => {
     | "DRIVER"
     | null;
 
-  const availableYears = [2023, 2024, 2025];
+  const currentYear = new Date().getFullYear();
+  const availableYears = [currentYear - 2, currentYear - 1, currentYear];
 
   // Lấy danh sách kho từ API khi component mount
   useEffect(() => {
@@ -92,6 +95,27 @@ const RevenueChart: React.FC = () => {
             type === "monthly"
               ? await getMonthlyStats(year)
               : await getQuarterlyStats(year);
+
+          if (response.status === 200 && response.data) {
+            setData(response.data);
+            setWarehouseData([]);
+          } else {
+            setError(response.message || "Không thể tải dữ liệu");
+            setData([]);
+          }
+        } catch (err) {
+          setError("Không thể tải dữ liệu. Vui lòng thử lại sau.");
+          console.error(`Error fetching ${type} stats:`, err);
+          setData([]);
+        } finally {
+          hideLoading();
+        }
+      } else if (userRole === "CUSTOMER") {
+        try {
+          const response =
+            type === "monthly"
+              ? await getMonthlyStatsByCustomer(year)
+              : await getQuarterlyStatsByCustomer(year);
 
           if (response.status === 200 && response.data) {
             setData(response.data);
