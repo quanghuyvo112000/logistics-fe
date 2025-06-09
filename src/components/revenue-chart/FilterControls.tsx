@@ -29,12 +29,12 @@ const availableStatTypes: {
   {
     value: "monthly",
     label: "Theo tháng",
-    roles: ["WAREHOUSE_MANAGER", "DRIVER"],
+    roles: ["WAREHOUSE_MANAGER", "DRIVER", "CUSTOMER"],
   },
   {
     value: "quarterly",
     label: "Theo quý",
-    roles: ["WAREHOUSE_MANAGER", "DRIVER"],
+    roles: ["WAREHOUSE_MANAGER", "DRIVER", "CUSTOMER"],
   },
   { value: "warehouse", label: "Theo kho", roles: ["ADMIN"] },
 ];

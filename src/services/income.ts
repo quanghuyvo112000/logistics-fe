@@ -72,3 +72,35 @@ export const getQuarterlyStats = async (year: number): Promise<TimeAmountRespons
     throw error;
   }
 };
+
+// thống kê doanh thu theo tháng (cho CUSTOMER)
+export const getMonthlyStatsByCustomer = async (year: number): Promise<TimeAmountResponse> => {
+  try {
+    const response = await callApi<TimeAmountResponse>(
+      'GET',
+      `statistics/customer/monthly/${year}`,
+      undefined,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error(`Error fetching monthly stats for year ${year}:`, error);
+    throw error;
+  }
+};
+
+// thống kê doanh thu theo quý (cho CUSTOMER)
+export const getQuarterlyStatsByCustomer = async (year: number): Promise<TimeAmountResponse> => {
+  try {
+    const response = await callApi<TimeAmountResponse>(
+      'GET',
+      `statistics/customer/quarterly/${year}`,
+      undefined,
+      true
+    );
+    return response;
+  } catch (error) {
+    console.error(`Error fetching quarterly stats for year ${year}:`, error);
+    throw error;
+  }
+};
