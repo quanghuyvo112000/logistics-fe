@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  getMonthlyOrderStatsByAdmin,
+  getMonthlyOrderStatsByCustomer,
+  getMonthlyOrderStatsByWarehouseManager,
   getMonthlyStats,
   getMonthlyStatsByCustomer,
   getQuarterlyStats,
@@ -9,6 +12,7 @@ import {
 import { getAllWarehouse } from "../../services/warehouse";
 import {
   ChartData,
+  MonthlyOrderStatusGroupResponse,
   StatType,
   TimeAmount,
   WarehouseAmount,
@@ -22,6 +26,7 @@ import NoDataMessage from "./NoDataMessage";
 import RevenueChartDisplay from "./RevenueChartDisplay";
 import SummaryStats from "./SummaryStats";
 import { getChartTitle } from "./utils";
+import OrderStatsCards from "./OrderStatsCards";
 
 interface Warehouse {
   id: string;
@@ -38,6 +43,8 @@ const RevenueChart: React.FC = () => {
   const [availableWarehouses, setAvailableWarehouses] = useState<Warehouse[]>(
     []
   );
+  const [orderStats, setOrderStats] =
+    useState<MonthlyOrderStatusGroupResponse | null>(null);
 
   const userRole = authHelper.getUserRole() as
     | "ADMIN"
@@ -194,6 +201,50 @@ const RevenueChart: React.FC = () => {
     fetchTimeBasedData,
   ]);
 
+  useEffect(() => {
+    const fetchOrderStats = async () => {
+      if (
+        userRole !== "CUSTOMER" &&
+        userRole !== "WAREHOUSE_MANAGER" &&
+        userRole !== "ADMIN"
+      )
+        return;
+
+      try {
+        showLoading("Đang tải thống kê đơn hàng...");
+        setError(null);
+        await new Promise((r) => setTimeout(r, 800));
+
+        let response;
+
+        if (userRole === "CUSTOMER") {
+          response = await getMonthlyOrderStatsByCustomer(selectedYear);
+        } else if (userRole === "WAREHOUSE_MANAGER") {
+          response = await getMonthlyOrderStatsByWarehouseManager(selectedYear);
+        } else if (userRole === "ADMIN" && selectedWarehouseId) {
+          response = await getMonthlyOrderStatsByAdmin(
+            selectedWarehouseId,
+            selectedYear
+          );
+        }
+
+        if (response?.status === 200 && response.data) {
+          setOrderStats(response.data);
+        } else {
+          setError(response?.message || "Không thể tải thống kê đơn hàng");
+          setOrderStats(null);
+        }
+      } catch (err) {
+        setError("Lỗi khi tải thống kê đơn hàng");
+        console.error(err);
+      } finally {
+        hideLoading();
+      }
+    };
+
+    fetchOrderStats();
+  }, [selectedYear, selectedWarehouseId, userRole]);
+
   const handleRetry = () => {
     if (statType === "warehouse") {
       if (selectedWarehouseId)
@@ -227,6 +278,8 @@ const RevenueChart: React.FC = () => {
         <ErrorDisplay error={error} onRetry={handleRetry} />
       ) : chartData.length > 0 ? (
         <>
+          {userRole !== "DRIVER" && <OrderStatsCards data={orderStats} />}
+
           <RevenueChartDisplay data={chartData} />
           <SummaryStats data={chartData} />
           <DataTable

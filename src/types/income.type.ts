@@ -40,3 +40,19 @@ export interface ChartData {
   time: string;
   amount: number;
 }
+
+export interface MonthlyOrderStatus {
+  time: string;
+  totalOrders: number;
+}
+
+export interface MonthlyOrderStatusGroupResponse {
+  created: MonthlyOrderStatus[];
+  deliveredSuccessfully: MonthlyOrderStatus[];
+}
+
+export interface MonthlyOrderStatusGroupApiResponse {
+  status: number;
+  message: string;
+  data: MonthlyOrderStatusGroupResponse | null;
+}
