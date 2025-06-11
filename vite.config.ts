@@ -8,5 +8,6 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8080', // Proxy requests starting with "/api" to your Spring Boot server
     }
-  }
+  },
+  base: '/', // Use the base URL from environment variables or default to '/'
 })
