@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, Method } from 'axios';
 import { localStorageHelper } from './localStorageHelper';
 
-const API_BASE_URL = 'https://a058-2401-d800-a8f-3fe7-41fb-c8df-e8d3-c1bb.ngrok-free.app/api/';
+const API_BASE_URL = 'https://aside-american-cigarettes-stylus.trycloudflare.com/api/';
 
 export const callApi = async <TResponse = unknown, TData = unknown>(
   method: Method,
