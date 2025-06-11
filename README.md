@@ -1,58 +1,74 @@
-<<<<<<< HEAD
-# logistics-fe
-=======
-# React + TypeScript + Vite
+Logistics Frontend
+This project is the frontend for the Logistics Management System, built with React, TypeScript, and Vite, providing a modern development environment with fast refresh, modular code structure, and strong type safety.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🛠️ Project Setup
+This template offers a minimal and extensible setup for working with React and Vite. It includes:
 
-Currently, two official plugins are available:
+Hot Module Replacement (HMR)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+ESLint integration
 
-## Expanding the ESLint configuration
+TypeScript configuration for scalable development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+⚙️ Plugins
+Two official Vite plugins are supported:
 
-```js
+@vitejs/plugin-react – Uses Babel for Fast Refresh
+
+@vitejs/plugin-react-swc – Uses SWC for improved performance
+
+You can choose either based on your performance needs and compatibility.
+
+✅ ESLint Configuration
+For production-grade applications, we recommend extending the ESLint configuration to support type-aware rules for better type safety and code quality.
+
+ts
+Copy
+Edit
 export default tseslint.config({
   extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
+    // Use type-aware rules
     ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
+    // Optionally use stricter or stylistic rules
     ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
     ...tseslint.configs.stylisticTypeChecked,
   ],
   languageOptions: {
-    // other options...
     parserOptions: {
       project: ['./tsconfig.node.json', './tsconfig.app.json'],
       tsconfigRootDir: import.meta.dirname,
     },
   },
 })
-```
+🔍 Recommended Plugins
+For improved linting tailored to React projects, consider installing the following plugins:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+bash
+Copy
+Edit
+npm install eslint-plugin-react-x eslint-plugin-react-dom --save-dev
+Then update your eslint.config.js:
 
-```js
-// eslint.config.js
+ts
+Copy
+Edit
 import reactX from 'eslint-plugin-react-x'
 import reactDom from 'eslint-plugin-react-dom'
 
 export default tseslint.config({
   plugins: {
-    // Add the react-x and react-dom plugins
     'react-x': reactX,
     'react-dom': reactDom,
   },
   rules: {
-    // other rules...
-    // Enable its recommended typescript rules
     ...reactX.configs['recommended-typescript'].rules,
     ...reactDom.configs.recommended.rules,
   },
 })
-```
->>>>>>> fd9e1cf (Initial commit: Logistics frontend)
+📦 Recommended Practices
+Maintain separate TypeScript config files for different targets (e.g., tsconfig.app.json for application code).
+
+Keep the ESLint configuration modular and extendable to scale with the application.
+
+Use strict linting rules in CI/CD pipelines to ensure code consistency and quality.
+
