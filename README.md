@@ -1,6 +1,7 @@
 Logistics Frontend
 This project is the frontend for the Logistics Management System, built with React, TypeScript, and Vite, providing a modern development environment with fast refresh, modular code structure, and strong type safety.
 
+
 🛠️ Project Setup
 This template offers a minimal and extensible setup for working with React and Vite. It includes:
 
@@ -10,6 +11,7 @@ ESLint integration
 
 TypeScript configuration for scalable development
 
+
 ⚙️ Plugins
 Two official Vite plugins are supported:
 
@@ -18,6 +20,7 @@ Two official Vite plugins are supported:
 @vitejs/plugin-react-swc – Uses SWC for improved performance
 
 You can choose either based on your performance needs and compatibility.
+
 
 ✅ ESLint Configuration
 For production-grade applications, we recommend extending the ESLint configuration to support type-aware rules for better type safety and code quality.
@@ -40,6 +43,8 @@ export default tseslint.config({
     },
   },
 })
+
+
 🔍 Recommended Plugins
 For improved linting tailored to React projects, consider installing the following plugins:
 
@@ -65,6 +70,8 @@ export default tseslint.config({
     ...reactDom.configs.recommended.rules,
   },
 })
+
+
 📦 Recommended Practices
 Maintain separate TypeScript config files for different targets (e.g., tsconfig.app.json for application code).
 
