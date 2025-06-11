@@ -89,8 +89,7 @@ const DriverCalendar = ({
     initialSchedules || []
   );
   const [loading, setLoading] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   // Fetch schedules on component mount
   useEffect(() => {

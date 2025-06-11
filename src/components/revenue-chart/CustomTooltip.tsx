@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
 import { Paper, Typography, Box } from "@mui/material";
 import { formatCurrency } from "../../utils/moneyFormat";
 
