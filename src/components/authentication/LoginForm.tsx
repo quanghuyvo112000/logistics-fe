@@ -15,7 +15,6 @@ import {
 import React, { useState } from "react";
 import { localStorageHelper } from "../shared/localStorageHelper";
 import { useNavigate } from "react-router-dom";
-import { encryptData } from "../../utils/crypto";
 import { login } from "../../services/authen";
 import { showLoading, hideLoading } from "../shared/loadingHandler";
 
@@ -50,7 +49,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ toggleForm }) => {
           : response.data;
 
       const token = data.token;
-      const role = encryptData(data.role);
+      const role = data.role;
 
       const authData = {
         token,

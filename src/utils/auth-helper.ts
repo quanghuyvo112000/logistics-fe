@@ -1,6 +1,5 @@
 import { localStorageHelper } from "../components/shared/localStorageHelper"
 import { UserRole } from "../types/calendar.types"
-import { decryptData } from "./crypto"
 
 
 /**
@@ -13,7 +12,7 @@ export const getUserRole = (): UserRole | null => {
     if (!authDataString) return null
 
     const authData = JSON.parse(authDataString || "{}")
-    const role = decryptData(authData.role)
+    const role = authData.role
 
     // Validate that the role is one of the expected values
     if (role === "ADMIN" || role === "WAREHOUSE_MANAGER" || role === "DRIVER" || role === "CUSTOMER") {
@@ -28,7 +27,6 @@ export const getUserRole = (): UserRole | null => {
 }
 
 const authHelper = {
-  decryptData,
   getUserRole,
 }
 

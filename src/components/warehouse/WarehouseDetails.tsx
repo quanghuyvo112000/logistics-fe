@@ -22,7 +22,6 @@ import { useState } from "react";
 import { Warehouse } from "../../types/warehouse.types";
 import AddManagerModal from "./AddManagerModal";
 import { localStorageHelper } from "../shared/localStorageHelper";
-import { decryptData } from "../../utils/crypto";
 import AddDriverModal from "./AddDriverModal";
 import { convertVehicleType } from "../../utils/moneyFormat";
 
@@ -46,7 +45,7 @@ const WarehouseDetails = ({
 
   const authDataString = localStorageHelper.getItem<string>("auth_token");
   const authData = JSON.parse(authDataString || "{}");
-  const role = decryptData(authData.role);
+  const role = authData.role;
 
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return "N/A";
