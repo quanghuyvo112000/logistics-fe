@@ -40,7 +40,7 @@ const OrderStatsCards: React.FC<Props> = ({ data }) => {
             <AssignmentIcon sx={{ fontSize: 40, color: "#1976d2", mr: 2 }} />
             <Box>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", textAlign: "center" }}>
-                Đơn đã tạo ({time})
+                Đơn được tạo mới (Trong tháng {time})
               </Typography>
               {totalCreated !== undefined && totalCreated !== null ? (
                 <Typography variant="h4" color="primary" sx={{ fontWeight: "bold", textAlign: "center" }}>
@@ -64,7 +64,7 @@ const OrderStatsCards: React.FC<Props> = ({ data }) => {
             <CheckCircleIcon sx={{ fontSize: 40, color: "#2e7d32", mr: 2 }} />
             <Box>
               <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", textAlign: "center" }}>
-                Giao thành công ({time})
+                Giao thành công (Trong tháng {time})
               </Typography>
               {totalDelivered !== undefined && totalDelivered !== null ? (
                 <Typography variant="h4" color="success.main" sx={{ fontWeight: "bold", textAlign: "center" }}>
