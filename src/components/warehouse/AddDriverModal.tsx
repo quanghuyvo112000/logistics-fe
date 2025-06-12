@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import type { CreateDriverPayload } from "../../types/user.types";
 import {
@@ -49,6 +49,25 @@ const AddDriverModal: React.FC<Props> = ({
     vehiclePlate: "",
     warehouseId: data,
   });
+
+  useEffect(() => {
+    if (!open) {
+      setFormData({
+        fullName: "",
+        birthday: "",
+        email: "",
+        phone: "",
+        province: "",
+        district: "",
+        ward: "",
+        address: "",
+        vehicleType: "",
+        vehiclePlate: "",
+        warehouseId: data,
+      });
+      setSubmitError(null);
+    }
+  }, [open, data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -115,6 +134,23 @@ const AddDriverModal: React.FC<Props> = ({
 
       showMessage("Tạo nhân viên giao hàng thành công!", "success");
       await fetchWarehouses();
+      // Reset form
+      setFormData({
+        fullName: "",
+        birthday: "",
+        email: "",
+        phone: "",
+        province: "",
+        district: "",
+        ward: "",
+        address: "",
+        vehicleType: "",
+        vehiclePlate: "",
+        warehouseId: data,
+      });
+
+      // Đóng modal nếu muốn
+      onClose();
       return true;
     } catch (error) {
       console.error(error);

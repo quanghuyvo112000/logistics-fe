@@ -1,5 +1,5 @@
 import { Alert, Box, Grid, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSnackbar } from "../../contexts/SnackbarContext";
 import { createManager } from "../../services/user";
 import { CreateManagerPayload } from "../../types/user.types";
@@ -40,6 +40,23 @@ const AddManagerModal: React.FC<Props> = ({
     warehouseId: data,
   });
 
+  useEffect(() => {
+    if (!open) {
+      setFormData({
+        fullName: "",
+        birthday: "",
+        email: "",
+        phone: "",
+        province: "",
+        district: "",
+        ward: "",
+        address: "",
+        warehouseId: data,
+      });
+      setSubmitError(null); // reset luôn lỗi
+    }
+  }, [open, data]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -65,7 +82,7 @@ const AddManagerModal: React.FC<Props> = ({
       showLoading("Đang tạo quản lý kho hàng...");
       setSubmitError(null);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       if (
         !formData.fullName ||
         !formData.birthday ||
@@ -104,6 +121,20 @@ const AddManagerModal: React.FC<Props> = ({
       await createManager(formData);
       showMessage("Tạo quản lý thành công!", "success");
       await fetchWarehouses();
+      // Reset form
+      setFormData({
+        fullName: "",
+        birthday: "",
+        email: "",
+        phone: "",
+        province: "",
+        district: "",
+        ward: "",
+        address: "",
+        warehouseId: data, // vẫn giữ warehouseId
+      });
+      // đóng modal
+      onClose();
       return true;
     } catch (error) {
       console.error(error);
