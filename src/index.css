@@ -13,6 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (min-width: 1200px) {
+  .css-5c1adp-MuiContainer-root {
+    max-width: 1160px !important;
+  }
+}
 
 a {
   font-weight: 500;
