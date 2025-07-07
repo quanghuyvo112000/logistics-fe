@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Box,
+  Container,
+  InputAdornment,
   Paper,
   Table,
   TableBody,
@@ -11,12 +13,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Search } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { getAllWarehouse, getWarehouse } from "../../services/warehouse";
 import authHelper from "../../utils/auth-helper";
 import { convertVehicleType } from "../../utils/moneyFormat";
-import { Driver } from "./interface.type";
 import { hideLoading, showLoading } from "../shared/loadingHandler";
+import { Driver } from "./interface.type";
 
 const DriversTable: React.FC = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -95,85 +98,108 @@ const DriversTable: React.FC = () => {
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <TableContainer component={Paper}>
-      <Box
-        sx={{
-          padding: 2,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h5" fontWeight="bold">
-          Danh sách tài xế
-        </Typography>
-        <TextField
-          label="Tìm kiếm tài xế"
-          variant="outlined"
-          size="small"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+    <Container>
+      <Box sx={{ width: "100%" }}>
+        <Paper>
+          <Box sx={{ mb: 2, mx: 2 }}>
+            <Box sx={{ p: 3 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  mb: 3,
+                }}
+              >
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                  Quản lý tài xế
+                </Typography>
+              </Box>
+            </Box>
+            <TextField
+              sx={{ mb: 2 }}
+              fullWidth
+              variant="outlined"
+              placeholder="Tìm kiếm theo mã đơn, tên khách hàng hoặc người nhận..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TableContainer
+              sx={{
+                width: "100%",
+                overflowX: "auto",
+              }}
+              component={Paper}
+            >
+              <Table sx={{ minWidth: 100 }} aria-label="orders table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
+                      Họ tên
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
+                      Email
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
+                      Điện thoại
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
+                      Ngày sinh
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
+                      Phương tiện
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
+                      Biển số
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 300 }}>
+                      Địa chỉ thường trú
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold", minWidth: 300 }}>
+                      Kho hàng
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredDrivers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} align="center">
+                        Không tìm thấy tài xế nào.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredDrivers.map((driver, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{driver.fullName}</TableCell>
+                        <TableCell>{driver.email}</TableCell>
+                        <TableCell>{driver.phone}</TableCell>
+                        <TableCell>
+                          {new Date(driver.birthday).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          {convertVehicleType(driver.vehicleType)}
+                        </TableCell>
+                        <TableCell>{driver.vehiclePlate}</TableCell>
+                        <TableCell>{`${driver.address}, ${driver.ward}, ${driver.district}, ${driver.province}`}</TableCell>
+                        <TableCell>
+                          {driver.warehouseName || warehouseName || "N/A"}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Paper>
       </Box>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
-              Họ tên
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
-              Email
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
-              Điện thoại
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
-              Ngày sinh
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
-              Phương tiện
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 200 }}>
-              Biển số
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 300 }}>
-              Địa chỉ
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", minWidth: 300 }}>
-              Kho hàng
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredDrivers.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={7} align="center">
-                Không tìm thấy tài xế nào.
-              </TableCell>
-            </TableRow>
-          ) : (
-            filteredDrivers.map((driver, index) => (
-              <TableRow key={index}>
-                <TableCell>{driver.fullName}</TableCell>
-                <TableCell>{driver.email}</TableCell>
-                <TableCell>{driver.phone}</TableCell>
-                <TableCell>
-                  {new Date(driver.birthday).toLocaleDateString()}
-                </TableCell>
-                <TableCell>{convertVehicleType(driver.vehicleType)}</TableCell>
-                <TableCell>{driver.vehiclePlate}</TableCell>
-                <TableCell>
-                  {`${driver.address}, ${driver.ward}, ${driver.district}, ${driver.province}`}
-                </TableCell>
-                <TableCell>
-                  {driver.warehouseName || warehouseName || "N/A"}
-                </TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    </Container>
   );
 };
 
